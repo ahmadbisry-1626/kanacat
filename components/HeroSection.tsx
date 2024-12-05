@@ -89,7 +89,7 @@ const HeroSection = () => {
                 <Image src="/img/cat-cropped.png" alt='' width={1000} height={1000} sizes='100vw' className='absolute size-full object-cover' />
             </div>
 
-            <div className='absolute top-4 md:inset-x-12 lg:inset-x-20 py-3'>
+            <div className='absolute top-4 md:inset-x-12 lg:inset-x-20'>
                 <nav className='flex items-center gap-2'>
                     <div className='flex items-end gap-2'>
                         <Image src='/img/black.png' width={40} height={40} alt='logo' sizes='100vw' />
@@ -100,10 +100,10 @@ const HeroSection = () => {
 
             <div className='flex flex-col leading-[1.2] lg:px-20 md:px-12'>
                 <span className='text-primary md:text-[18px] lg:text-[20px] mb-3'>Explore breeds, traits, and care tips.</span>
-                <h1 className='lg:text-[4rem] md:text-[3rem] font-semibold'>
+                <h1 className='lg:text-[4rem] md:text-[3rem] font-semibold leading-[1]'>
                     Find Purrfect <br /> Guide to Cats
                 </h1>
-                <p className='max-w-md mt-7 leading-relaxed'>
+                <p className='max-w-md mt-5 leading-relaxed'>
                     Whether you're a cat lover or looking to adopt, our website offers a comprehensive guide to cat breeds, their personalities, health, grooming needs, and more.
                 </p>
                 <Button className='mt-7 w-fit h-[50px] rounded-full max-md:text-sm' size={"lg"}>Find Cat</Button>
