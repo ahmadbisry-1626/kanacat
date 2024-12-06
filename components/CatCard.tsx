@@ -56,10 +56,50 @@ const CatCard = ({ query }: { query: string }) => {
         setIsOpen(!isOpen)
     }
 
+    const handleMouseMove = (e: any) => {
+        const elemen = headlineRef.current
+        if (!elemen) return
+
+        const { left, top, height, width } = elemen.getBoundingClientRect()
+
+        const relativeX = (e.clientX - left) / width
+        const relativeY = (e.clientY - top) / height
+
+        const tiltX = (relativeY - 0.5) * 20
+        const tiltY = (relativeX - 0.5) * -20
+
+        gsap.to(elemen, {
+            rotateY: tiltY,
+            rotateX: tiltX,
+            translateZ: (relativeY - 0.5) * 50,
+            transformPerspective: 700,
+            ease: 'power3.out',
+            duration: 0.5,
+        })
+
+    }
+
+    const handleMouseLeave = () => {
+        const elemen = headlineRef.current
+        if (!elemen) return
+
+        gsap.to(elemen, {
+            rotateY: 0,
+            rotateX: 0,
+            translateZ: 0,
+            ease: 'power3.out',
+            duration: 0.5,
+        })
+    }
+
 
     return (
         <section className="w-full min-h-screen flex flex-col py-20 container mx-auto md:px-6 px-5 relative" id='header'>
-            <div className="flex flex-col items-center text-center gap-2 headline-container" ref={headlineRef}>
+            <div
+                className="flex flex-col items-center text-center gap-2 headline-container w-fit mx-auto"
+                ref={headlineRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}>
                 <span className="text-primary text-[16px] md:text-[18px] font-medium">
                     Explore cat breeds, their personalities, and more
                 </span>
