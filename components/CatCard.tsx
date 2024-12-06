@@ -182,13 +182,13 @@ const CatCard = ({ query }: { query: string }) => {
 
                                     <div className='flex items-start gap-2 flex-wrap h-[55px] line-clamp-2'>
                                         {cat.temperament.split(',').map((temp, i) => (
-                                            <span key={i} className='text-blue-700'>
+                                            <span key={i} className='text-blue-700 hover:text-primary cursor-pointer transition duration-300'>
                                                 #{temp}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
-                                <Button className='w-full h-[50px] rounded-full !bg-secondary mt-7' size={"lg"} asChild>
+                                <Button className='w-full h-[50px] rounded-[12px] !bg-secondary mt-7' size={"lg"} asChild>
                                     <Link href={`/cat/${cat.id}`}>
                                         Details
                                     </Link>

@@ -8,7 +8,6 @@ export const useInfiniteCat = () => {
         queryFn: fetchCat,
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) => {
-            // Assume more pages exist if the last page has items
             return lastPage.length > 0 ? allPages.length + 1 : undefined;
         },
         staleTime: 5 * 60 * 1000,

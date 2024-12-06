@@ -8,8 +8,8 @@ export const fetchCat = async ({ pageParam = 1 }: QueryFunctionContext): Promise
     try {
         const response = await axiosInstance.get(`/breeds`, {
             params: {
-                limit: 10, // Number of items per page
-                page: pageParam, // Current page
+                limit: 9,
+                page: pageParam,
             },
         });
 
