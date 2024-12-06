@@ -2,10 +2,10 @@
 
 import { useGSAP } from '@gsap/react'
 import Image from 'next/image'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
-import { Button } from './ui/button';
+import { Button } from './ui/button'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -42,7 +42,6 @@ const HeroSection = () => {
     const handleMouseLeave = () => {
         const revealElemen = revealRef.current;
 
-        // Reset Polygon Reveal
         gsap.to(revealElemen, {
             opacity: 0,
             clipPath: 'polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)',
@@ -52,28 +51,66 @@ const HeroSection = () => {
     };
 
     useGSAP(() => {
-        gsap.set('.animation-clip', {
-            clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
-        });
+        ScrollTrigger.matchMedia({
+            "(min-width: 768px)": () => {
+                gsap.set('.animation-clip', {
+                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+                });
 
-        gsap.from('.animation-clip', {
-            scrollTrigger: {
-                trigger: '#clip',
-                start: 'center center',
-                end: '+=1000 center',
-                scrub: 0.5,
-                pin: true,
-                pinSpacing: true
+                gsap.from('.animation-clip', {
+                    scrollTrigger: {
+                        trigger: '#clip',
+                        start: 'center center',
+                        end: '+=1000 center',
+                        scrub: 0.5,
+                        pin: true,
+                        pinSpacing: true,
+                    },
+                    clipPath: 'polygon(64% 90%, 61% 32%, 86% 15%, 93% 49%)',
+                    transformPerspective: 1000,
+                    ease: 'power2.inOut',
+                });
             },
-            clipPath: 'polygon(64% 90%, 61% 32%, 86% 15%, 93% 49%)',
-            transformPerspective: 1000,
-            ease: 'power2.inOut',
+
+            "(max-width: 767px)": () => {
+                ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+                gsap.set('.animation-clip', {
+                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+                });
+            },
         });
     });
 
+    useGSAP(() => {
+        ScrollTrigger.matchMedia({
+            "(max-width: 768px)": () => {
+                gsap.set('.animation-clip-mobile', {
+                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+                });
+
+                gsap.from('.animation-clip-mobile', {
+                    scrollTrigger: {
+                        trigger: '#clip',
+                        start: 'center center',
+                        end: '+=1000 center',
+                        scrub: 0.5,
+                        pin: true,
+                        pinSpacing: true,
+                    },
+                    clipPath: 'polygon(39% 12%, 66% 20%, 55% 49%, 34% 35%)',
+                    transformPerspective: 1000,
+                    ease: 'power2.inOut',
+                });
+            },
+        });
+    });
+
+
+
     return (
-        <section className="w-screen min-h-dvh relative flex items-center overflow-hidden" id="clip" ref={imgRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-            <div className='absolute size-full animation-clip md:block hidden'>
+        <section className={`w-screen min-h-dvh relative flex items-end md:items-center overflow-hidden`} id="clip" ref={imgRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+            {/* IMAGE ON MD LARGER */}
+            <div className='absolute size-full animation-clip md:block hidden z-10'>
                 <Image src="/img/cat.jpg" alt='' width={1000} height={1000} sizes='100vw' className='absolute left-0 top-0 size-full object-cover' />
 
                 <div className='absolute top-40 md:left-12 lg:left-20'>
@@ -81,16 +118,36 @@ const HeroSection = () => {
                 </div>
             </div>
 
-            <div className='absolute size-full opacity-0 md:block hidden' ref={revealRef}>
+            {/* IMAGE ON MOBILE */}
+            <div className='absolute size-full animation-clip-mobile md:hidden block z-10'>
+                <Image src="/img/cat-mobile.jpg" alt='' width={1000} height={1000} sizes='100vw' className='absolute left-0 top-0 size-full object-cover' />
+
+                <div className='absolute bottom-10 left-1/2 -translate-x-1/2 w-full'>
+                    <h1 className='text-white text-[2.5rem] font-bold leading-[1] text-center'>
+                        Welcome to <br /> the cat's world
+                    </h1>
+                </div>
+            </div>
+            <div className='absolute size-full md:hidden block mask-clip-path-1'>
+                <Image src="/img/cat-mobile.jpg" alt='' width={1000} height={1000} sizes='100vw' className='absolute left-0 top-0 size-full object-cover' />
+            </div>
+            <div className='absolute size-full md:hidden block mask-clip-path-2'>
+                <Image src="/img/cat-mobile.jpg" alt='' width={1000} height={1000} sizes='100vw' className='absolute left-0 top-0 size-full object-cover' />
+            </div>
+            <div className='absolute size-full md:hidden block mask-clip-path-3'>
+                <Image src="/img/cat-mobile.jpg" alt='' width={1000} height={1000} sizes='100vw' className='absolute left-0 top-0 size-full object-cover' />
+            </div>
+
+            <div className='absolute size-full opacity-0 md:block hidden z-10' ref={revealRef}>
                 <Image src="/img/cat.jpg" alt='' width={1000} height={1000} sizes='100vw' className='absolute left-0 top-0 size-full object-cover' />
             </div>
 
             <div className='absolute w-full h-full md:block hidden'>
-                <Image src="/img/cat-cropped.png" alt='' width={1000} height={1000} sizes='100vw' className='absolute size-full object-cover' />
+                <Image src="/img/cat-cropped.png" alt='' width={1000} height={1000} sizes='100vw' className='absolute size-full object-cover max-md:object-right' />
             </div>
 
-            <div className='absolute top-4 md:inset-x-12 lg:inset-x-20'>
-                <nav className='flex items-center gap-2'>
+            <div className='absolute top-4 md:inset-x-12 lg:inset-x-20 z-20'>
+                <nav className='flex items-center gap-2 py-1 max-md:px-4'>
                     <div className='flex items-end gap-2'>
                         <Image src='/img/black.png' width={40} height={40} alt='logo' sizes='100vw' />
                         <span className='font-medium text-[18px]'>KanaCat</span>
@@ -98,15 +155,17 @@ const HeroSection = () => {
                 </nav>
             </div>
 
-            <div className='flex flex-col leading-[1.2] lg:px-20 md:px-12'>
-                <span className='text-primary md:text-[18px] lg:text-[20px] mb-3'>Explore breeds, traits, and care tips.</span>
-                <h1 className='lg:text-[4rem] md:text-[3rem] font-semibold leading-[1]'>
+            <div className='flex flex-col max-md:items-center leading-[1.2] lg:px-20 md:px-12 px-5 max-md:-translate-y-14 max-md:text-center'>
+                <span className='text-primary md:text-[18px] lg:text-[20px] text-[18px] mb-3'>Explore breeds, traits, and care tips.</span>
+                <h1 className='lg:text-[4rem] md:text-[3rem] text-[2.5rem] font-bold leading-[1]'>
                     Find Purrfect <br /> Guide to Cats
                 </h1>
-                <p className='max-w-md mt-5 leading-relaxed'>
+                <p className='md:max-w-md mt-5 leading-relaxed md:text-[18px] md:block hidden'>
                     Whether you're a cat lover or looking to adopt, our website offers a comprehensive guide to cat breeds, their personalities, health, grooming needs, and more.
                 </p>
-                <Button className='mt-7 w-fit h-[50px] rounded-full max-md:text-sm' size={"lg"}>Find Cat</Button>
+                <p className='md:max-w-md mt-5 leading-relaxed md:text-[18px] block md:hidden'>
+                    Our website offers a comprehensive guide to cat breeds, their personalities, health, grooming needs, and more.
+                </p>
             </div>
         </section>
     )

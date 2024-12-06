@@ -3,14 +3,14 @@ import HeroSection from "@/components/HeroSection";
 import { searchParams } from "@/types";
 
 export default async function Home({ searchParams }: searchParams) {
-    const pageParam = searchParams.page?.toString() || '1'
-    const page = parseInt(pageParam)
-    const limit = 9
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+
+    const query = (await searchParams).query
 
     return (
-        <main className="w-screen bg-white overflow-hidden">
+        <main className="w-screen bg-white-background overflow-hidden">
             <HeroSection />
-            <CatCard page={page} limit={limit} />
+            <CatCard query={query} />
         </main>
     );
 }

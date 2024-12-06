@@ -12,7 +12,7 @@ export type CatProps = {
     weight: CatWeight;
     id: string;
     name: string;
-    image: CatImage;
+    image?: CatImage;
     cfa_url?: string;
     vetstreet_url?: string;
     vcahospitals_url?: string;
@@ -51,5 +51,6 @@ export type CatProps = {
 
 export type searchParams = {
     params: Promise<{ id: string }>
-    searchParams: { [key: string]: string | string[] | undefined }
+    // searchParams: { [key: string]: string | string[] | undefined }
+    searchParams: Promise<{ query: string, page: number }>
 }
