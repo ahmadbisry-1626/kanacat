@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { FaRegBookmark, FaRegHeart, FaSpinner } from 'react-icons/fa';
+import { FaRegBookmark, FaRegHeart } from 'react-icons/fa';
 import { RxLink2 } from 'react-icons/rx';
 import { Button } from './ui/button';
 import Link from 'next/link';
