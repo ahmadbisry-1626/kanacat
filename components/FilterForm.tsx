@@ -15,7 +15,7 @@ const FilterForm = () => {
             {filterContent.map((filter) => {
                 return (
                     <div className="flex items-center h-fit w-fit" key={filter.id}>
-                        <Checkbox id={filter.id} className='border-2 md:size-4 border-secondary' value={filter.id} />
+                        <Checkbox id={filter.id} className='border-2 md:size-4 border-black' value={filter.id} />
                         <label
                             htmlFor={filter.id}
                             className="md:text-[18px] capitalize ml-3 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none"

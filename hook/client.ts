@@ -5,4 +5,5 @@ export const axiosInstance = axios.create({
     headers: {
         'x-api-key': process.env.LIVE_API_KEY,
     },
+    timeout: 3000,
 });

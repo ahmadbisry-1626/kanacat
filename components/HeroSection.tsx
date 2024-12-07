@@ -155,18 +155,27 @@ const HeroSection = () => {
                 </nav>
             </div>
 
-            <div className='flex flex-col max-md:items-center leading-[1.2] lg:px-20 md:px-12 px-5 max-md:-translate-y-14 max-md:text-center'>
-                <span className='text-primary md:text-[18px] lg:text-[20px] text-[18px] mb-3'>Explore breeds, traits, and care tips.</span>
+            <div className='flex flex-col max-md:items-center leading-[1.2] lg:px-20 md:px-12 px-5 max-md:-translate-y-10 max-md:text-center'>
+                <span className='font-medium md:text-[18px] lg:text-[20px] text-[18px] mb-3 md:block hidden'>Explore breeds, traits, and care tips.</span>
                 <h1 className='lg:text-[4rem] md:text-[3rem] text-[2.5rem] font-bold leading-[1]'>
                     Find Purrfect <br /> Guide to Cats
                 </h1>
-                <p className='md:max-w-md mt-5 leading-relaxed md:text-[18px] md:block hidden'>
+                <p className='md:max-w-md mt-5 leading-relaxed md:text-[18px] md:block hidden text-gray-500'>
                     Whether you're a cat lover or looking to adopt, our website offers a comprehensive guide to cat breeds, their personalities, health, grooming needs, and more.
                 </p>
                 <p className='md:max-w-md mt-5 leading-relaxed md:text-[18px] block md:hidden'>
                     Our website offers a comprehensive guide to cat breeds, their personalities, health, grooming needs, and more.
                 </p>
+                <div className='flex items-center gap-3 mt-6'>
+                    <Button className='h-[54px] rounded-[12px] bg-black md:text-lg font-semibold' size={"lg"}>
+                        67+ Breeds
+                    </Button>
+                    <Button className='h-[54px] rounded-[12px] bg-black md:text-lg font-semibold' size={"lg"}>
+                        From catapi.com
+                    </Button>
+                </div>
             </div>
+
         </section>
     )
 }
