@@ -4,14 +4,9 @@ import { axiosInstance } from "@/hook/client"
 import { CatProps } from "@/types"
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-export const fetchCat = async ({ pageParam = 1 }: QueryFunctionContext): Promise<CatProps[]> => {
+export const fetchCat = async ({ pageParam = 0 }: QueryFunctionContext): Promise<CatProps[]> => {
     try {
-        const response = await axiosInstance.get(`/breeds`, {
-            params: {
-                limit: 9,
-                page: pageParam,
-            },
-        });
+        const response = await axiosInstance.get(`/breeds?limit=15&page=${pageParam}`);
 
         return response.data;
     } catch (error) {
@@ -19,3 +14,13 @@ export const fetchCat = async ({ pageParam = 1 }: QueryFunctionContext): Promise
         throw new Error("Failed to fetch cat");
     }
 };
+
+export const fetchCatUnfiltered = async (): Promise<CatProps[]> => {
+    try {
+        const response = await axiosInstance.get(`/breeds`)
+        return response.data
+    } catch (error) {
+        console.error(error)
+        throw new Error("Failed to fetch cat")
+    }
+}

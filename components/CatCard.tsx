@@ -10,15 +10,15 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
 import SearchForm from './SearchForm';
 import FilterForm from './FilterForm';
-import { useInfiniteCat } from '@/hook/queries';
+import { useCat, useInfiniteCat } from '@/hook/queries';
 import { useInView } from 'react-intersection-observer';
 
 gsap.registerPlugin(ScrollTrigger)
 
 const CatCard = () => {
     const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteCat();
+    const { data: catData, isFetched } = useCat()
     const [isOpen, setIsOpen] = useState(false)
-    const [isHoverActive, setIsHoverActive] = useState(false)
     const [query, setIsQuery] = useState('')
     const [filter, setFilter] = useState({
         indoor: false,
@@ -37,10 +37,9 @@ const CatCard = () => {
     const headlineRef = useRef<HTMLDivElement>(null);
 
     const filteredData = useMemo(() => {
-        if (!data) return []
+        if (!catData) return []
 
-        return data.pages
-            .flat()
+        return catData
             .filter((cat) =>
                 cat.name.toLowerCase().includes(query.toLowerCase()) ||
                 cat.origin.toLowerCase().includes(query.toLowerCase())
@@ -130,7 +129,7 @@ const CatCard = () => {
         })
     }
 
-    const dataLength = filteredData?.length
+    const dataLength = data?.pages.map((page) => page.length).reduce((acc, val) => acc + val, 0)
 
     return (
         <section className="w-full min-h-screen flex flex-col py-20 container mx-auto md:px-6 px-5 relative" id='header'>
@@ -179,20 +178,119 @@ const CatCard = () => {
                 </div>
             )}
 
+            {/* !query and filtering will show react query with infinite scoll */}
+            {!query && Object.values(filter).every((value) => !value) ? (
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10'>
+                    {data?.pages.map((page) => (
+                        page.map((cat) => {
+                            return (
+                                <div key={cat.id} className='w-full flex flex-col gap-3'>
+                                    <div className='flex items-center w-full justify-between'>
+                                        <div className='flex items-center gap-3 relative'>
+                                            <div className='size-10 flex items-center justify-center bg-black relative rounded-[8px] p-1' >
+                                                {cat.rare === 1 ? (
+                                                    <Image src={'/img/rare.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
+                                                ) : (
+                                                    <Image src={'/img/cat-white.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
+                                                )}
+                                            </div>
 
-            {filteredData.length > 0 ? (
+                                            <span className='text-[18px] font-semibold text-black'>
+                                                {cat.name}
+                                            </span>
+                                        </div>
+
+                                        <div className='group relative'>
+                                            <span className='px-3 py-2 bg-black/80 text-white rounded-[8px] absolute right-0 bottom-0 z-10 w-max opacity-0 group-hover:opacity-100 transition-all duration-300'>
+                                                {cat.origin}
+                                            </span>
+                                            {cat.country_code === 'SP' ? (
+                                                <div className='size-10 relative overflow-hidden rounded-full'>
+                                                    <Image src={`https://flagsapi.com/SG/flat/64.png`} alt='gambar cucing' width={100} height={100} sizes='100vw' className='absolute size-full object-cover object-center' />
+                                                </div>
+                                            ) : (
+                                                <div className='size-10 relative overflow-hidden rounded-full'>
+                                                    <Image src={`https://flagsapi.com/${cat.country_code}/flat/64.png` || '/img/countries.png'} alt='gambar cucing' width={100} height={100} sizes='100vw' className='absolute size-full object-cover object-center' />
+                                                </div>
+                                            )}
+
+                                        </div>
+                                    </div>
+
+                                    <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow'>
+                                        <Image src={cat.image?.url ?? '/img/404-white.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
+                                    </div>
+
+                                    <div className='flex flex-col rounded-[12px] gap-3 bg-white px-4 py-3 pb-4 shadow'>
+                                        <div className='flex items-center justify-between'>
+                                            <div className='flex items-center gap-3'>
+                                                <FaRegHeart className='size-6' />
+                                                <RxLink2 className='size-7' />
+                                            </div>
+
+                                            <FaRegBookmark className='size-6' />
+                                        </div>
+
+                                        <div className='flex flex-col gap-3'>
+                                            <p className='line-clamp-2 text-[16px] text-gray-500 text-justify break-words'>
+                                                {cat.description}
+                                            </p>
+
+                                            <div className='flex items-start gap-2 flex-wrap h-[55px] line-clamp-2'>
+                                                {cat.temperament.split(',').map((temp, i) => (
+                                                    <span key={i} className='text-blue-700 hover:text-black cursor-pointer transition duration-300'>
+                                                        #{temp}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <Button className='w-full h-[50px] rounded-[12px] !bg-black mt-7' size={"lg"} asChild>
+                                            <Link href={`/cat/${cat.id}`}>
+                                                Details
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </div>
+                            )
+                        }))
+                    )}
+
+                    {hasNextPage && (
+                        <div className='w-full h-[400px] flex items-center justify-center' ref={ref}>
+                            {isFetchingNextPage && (
+                                <div className='loader' />
+                            )}
+                        </div>
+                    )}
+
+                    {Array.from({
+                        length: Math.max(Math.min(data?.pages.flat().length || 1, 2), 1)
+                    }).map((_, i) => (
+                        hasNextPage && (
+                            <div className="w-full h-[450px] md:flex items-center justify-center hidden" key={i}>
+                                {isFetchingNextPage && (
+                                    <div className="loader" />
+                                )}
+                            </div>
+                        )
+                    ))}
+
+
+                </div>
+            ) : (
+                // when there's a query or filtering, it will show filtered data without limit on API
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10'>
                     {filteredData.map((cat) => {
                         const regex = new RegExp(`(${query})`, 'gi');
                         const catPart = cat.name.split(regex)
-
                         return (
+
                             <div key={cat.id} className='w-full flex flex-col gap-3'>
                                 <div className='flex items-center w-full justify-between'>
                                     <div className='flex items-center gap-3 relative'>
                                         <div className='size-10 flex items-center justify-center bg-black relative rounded-[8px] p-1' >
                                             {cat.rare === 1 ? (
-                                                <Image src={'/img/rare.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className=''/>
+                                                <Image src={'/img/rare.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
                                             ) : (
                                                 <Image src={'/img/cat-white.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
                                             )}
@@ -211,13 +309,6 @@ const CatCard = () => {
                                                 cat.name
                                             )}
                                         </span>
-
-                                        {/* {cat.rare === 1 && (
-                                            <span
-                                                className={`bg-black/80 rounded-[8px] px-3 py-2 absolute bottom-0 left-0 w-max translate-y-12 z-10 text-white ${isHoverActive ? 'opacity-100' : 'opacity-0'} transition-all duration-300`}>
-                                                This is rare cat
-                                            </span>
-                                        )} */}
                                     </div>
 
                                     <div className='group relative'>
@@ -272,41 +363,13 @@ const CatCard = () => {
                                 </div>
                             </div>
                         )
-                    })}
-
-
-                    {dataLength > 1 && (
-                        hasNextPage && (
-                            <div className='w-full h-[400px] flex items-center justify-center' ref={ref}>
-                                {isFetchingNextPage && (
-                                    <div className='loader' />
-                                )}
-                            </div>
-                        )
-                    )}
-
-                    {dataLength > 2 && (
-                        Array.from({ length: 2 }).map((_, i) => (
-                            hasNextPage && (
-                                <div className='w-full h-[400px] md:flex items-center justify-center hidden' key={i}>
-                                    {isFetchingNextPage && (
-                                        <div className='loader' />
-                                    )}
-                                </div>
-                            )
-                        ))
-                    )}
-
-                </div>
-            ) : filteredData.length === 0 && query ? (
-                <div className='w-full h-[300px] bg-gray-200 flex items-center justify-center rounded-[12px] px-5 py-3'>
-                    <span className='font-semibold text-[18px] line-clamp-[10]'>No result for "{query}"</span>
-                </div>
-            ): filteredData.length === 0 && Object.values(filter).some((val) => val) && (
-                <div className='w-full h-[300px] bg-gray-200 flex items-center justify-center rounded-[12px] px-5 py-3'>
-                    <span className='font-semibold text-[18px] line-clamp-[10]'>No cat found</span>
+                    })
+                    }
                 </div>
             )}
+
+
+
         </section>
     )
 }
