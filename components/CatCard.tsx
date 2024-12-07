@@ -185,7 +185,6 @@ const CatCard = () => {
                     {filteredData.map((cat) => {
                         const regex = new RegExp(`(${query})`, 'gi');
                         const catPart = cat.name.split(regex)
-                        const originPart = cat.origin.split(regex)
 
                         return (
                             <div key={cat.id} className='w-full flex flex-col gap-3'>
@@ -239,7 +238,7 @@ const CatCard = () => {
                                 </div>
 
                                 <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow'>
-                                    <Image src={cat.image?.url ?? '/img/404-blue.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
+                                    <Image src={cat.image?.url ?? '/img/404-white.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
                                 </div>
 
                                 <div className='flex flex-col rounded-[12px] gap-3 bg-white px-4 py-3 pb-4 shadow'>
