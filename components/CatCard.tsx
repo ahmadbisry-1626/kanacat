@@ -267,7 +267,7 @@ const CatCard = () => {
                         length: Math.max(Math.min(data?.pages.flat().length || 1, 2), 1)
                     }).map((_, i) => (
                         hasNextPage && (
-                            <div className="w-full h-[450px] md:flex items-center justify-center hidden" key={i}>
+                            <div className="w-full h-[400px] md:flex items-center justify-center hidden" key={i}>
                                 {isFetchingNextPage && (
                                     <div className="loader" />
                                 )}
