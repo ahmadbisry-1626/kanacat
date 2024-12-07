@@ -20,7 +20,20 @@ const CatCard = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [isHoverActive, setIsHoverActive] = useState(false)
     const [query, setIsQuery] = useState('')
+    const [filter, setFilter] = useState({
+        indoor: false,
+        lap: false,
+        experimental: false,
+        natural: false,
+        rare: false,
+        hairless: false,
+        rex: false,
+        suppressedTail: false,
+        shortLegs: false,
+    })
+
     const { ref, inView } = useInView();
+
     const headlineRef = useRef<HTMLDivElement>(null);
 
     const filteredData = useMemo(() => {
@@ -31,8 +44,20 @@ const CatCard = () => {
             .filter((cat) =>
                 cat.name.toLowerCase().includes(query.toLowerCase()) ||
                 cat.origin.toLowerCase().includes(query.toLowerCase())
-            )
-    }, [data, query])
+            ).filter((cat) => {
+                return (
+                    (!filter.indoor || cat.indoor === 1) &&
+                    (!filter.lap || cat.lap === 1) &&
+                    (!filter.experimental || cat.experimental === 0) &&
+                    (!filter.natural || cat.natural === 1) &&
+                    (!filter.rare || cat.rare === 1) &&
+                    (!filter.hairless || cat.hairless === 1) &&
+                    (!filter.rex || cat.rex === 1) &&
+                    (!filter.suppressedTail || cat.suppressed_tail === 1) &&
+                    (!filter.shortLegs || cat.short_legs === 1)
+                )
+            })
+    }, [data, query, filter])
 
 
     useEffect(() => {
@@ -105,14 +130,6 @@ const CatCard = () => {
         })
     }
 
-    const handleHover = () => {
-        setIsHoverActive(true)
-    }
-
-    const handleHoverLeave = () => {
-        setIsHoverActive(false)
-    }
-
     const dataLength = filteredData?.length
 
     return (
@@ -130,14 +147,15 @@ const CatCard = () => {
                 </h1>
             </div>
 
+            {/* DATA HANDLING */}
             <div className='flex items-center max-md:flex-col w-full md:justify-between gap-3 mt-20 mb-10 md:h-[54px] relative'>
                 <SearchForm query={query} setIsQuery={setIsQuery} />
                 <Button
-                    className='flex items-center gap-2 px-12 !bg-black md:h-full h-[50px] rounded-[12px] max-md:w-full font-medium text-[18px]'
+                    className='flex items-center gap-2 px-14 !bg-black md:h-full h-[50px] rounded-[12px] max-md:w-full font-medium text-[18px]'
                     size={"lg"}
                     onClick={handleFilterOpen}>
                     <span className={`absolute ${!isOpen ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'} transition-all duration-300`}>
-                        Filter
+                        {filter && Object.values(filter).some((val) => val) ? 'Filtered' : 'Filter'}
                     </span>
                     <span className={`absolute ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} transition-all duration-300`}>
                         Close
@@ -145,7 +163,7 @@ const CatCard = () => {
                 </Button>
 
                 <div className={`w-full max-w-lg rounded-[12px] bg-white shadow absolute top-0 right-0 translate-y-32 md:translate-y-20 ${isOpen ? 'z-20 opacity-100 h-[200px] md:h-[210px]' : 'translate-y-10 -z-10 opacity-0 h-[20px]'} transition-all duration-300 ease-in-out p-5`}>
-                    <FilterForm />
+                    <FilterForm filter={filter} setFilter={setFilter} />
                 </div>
             </div>
 
@@ -175,8 +193,7 @@ const CatCard = () => {
                                     <div className='flex items-center gap-3 relative'>
                                         <div className='size-10 flex items-center justify-center bg-black relative rounded-[8px] p-1' >
                                             {cat.rare === 1 ? (
-                                                <Image src={'/img/rare.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' onMouseEnter={handleHover}
-                                                    onMouseLeave={handleHoverLeave} />
+                                                <Image src={'/img/rare.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className=''/>
                                             ) : (
                                                 <Image src={'/img/cat-white.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
                                             )}
@@ -196,12 +213,12 @@ const CatCard = () => {
                                             )}
                                         </span>
 
-                                        {cat.rare === 1 && (
+                                        {/* {cat.rare === 1 && (
                                             <span
                                                 className={`bg-black/80 rounded-[8px] px-3 py-2 absolute bottom-0 left-0 w-max translate-y-12 z-10 text-white ${isHoverActive ? 'opacity-100' : 'opacity-0'} transition-all duration-300`}>
                                                 This is rare cat
                                             </span>
-                                        )}
+                                        )} */}
                                     </div>
 
                                     <div className='group relative'>
@@ -282,9 +299,13 @@ const CatCard = () => {
                     )}
 
                 </div>
-            ) : filteredData.length === 0 && query && (
+            ) : filteredData.length === 0 && query ? (
                 <div className='w-full h-[300px] bg-gray-200 flex items-center justify-center rounded-[12px] px-5 py-3'>
                     <span className='font-semibold text-[18px] line-clamp-[10]'>No result for "{query}"</span>
+                </div>
+            ): filteredData.length === 0 && filter && (
+                <div className='w-full h-[300px] bg-gray-200 flex items-center justify-center rounded-[12px] px-5 py-3'>
+                    <span className='font-semibold text-[18px] line-clamp-[10]'>No cat found</span>
                 </div>
             )}
         </section>
