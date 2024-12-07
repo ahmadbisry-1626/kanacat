@@ -302,7 +302,7 @@ const CatCard = () => {
                 <div className='w-full h-[300px] bg-gray-200 flex items-center justify-center rounded-[12px] px-5 py-3'>
                     <span className='font-semibold text-[18px] line-clamp-[10]'>No result for "{query}"</span>
                 </div>
-            ): filteredData.length === 0 && filter && (
+            ): filteredData.length === 0 && Object.values(filter).some((val) => val) && (
                 <div className='w-full h-[300px] bg-gray-200 flex items-center justify-center rounded-[12px] px-5 py-3'>
                     <span className='font-semibold text-[18px] line-clamp-[10]'>No cat found</span>
                 </div>
