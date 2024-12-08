@@ -8,7 +8,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     console.log(id)
 
     return (
-        <main className='w-screen min-h-screen flex flex-col container px-5 mx-auto overflow-hidden'>
+        <main className='w-screen min-h-screen flex flex-col container md:px-6 px-5 mx-auto overflow-hidden'>
             <Navbar />
             <CatDetails id={id}/>
         </main>

@@ -12,6 +12,7 @@ import SearchForm from './SearchForm';
 import FilterForm from './FilterForm';
 import { useCat, useInfiniteCat } from '@/hook/queries';
 import { useInView } from 'react-intersection-observer';
+import { FaLocationDot } from 'react-icons/fa6';
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -185,40 +186,17 @@ const CatCard = () => {
                         page.map((cat) => {
                             return (
                                 <div key={cat.id} className='w-full flex flex-col gap-3'>
-                                    <div className='flex items-center w-full justify-between'>
-                                        <div className='flex items-center gap-3 relative'>
-                                            <div className='size-10 flex items-center justify-center bg-black relative rounded-[8px] p-1' >
-                                                {cat.rare === 1 ? (
-                                                    <Image src={'/img/rare.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
-                                                ) : (
-                                                    <Image src={'/img/cat-white.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
-                                                )}
-                                            </div>
-
-                                            <span className='text-[18px] font-semibold text-black'>
-                                                {cat.name}
-                                            </span>
-                                        </div>
-
-                                        <div className='group relative'>
-                                            <span className='px-3 py-2 bg-black/80 text-white rounded-[8px] absolute right-0 bottom-0 z-10 w-max opacity-0 group-hover:opacity-100 transition-all duration-300'>
-                                                {cat.origin}
-                                            </span>
-                                            {cat.country_code === 'SP' ? (
-                                                <div className='size-10 relative overflow-hidden rounded-full'>
-                                                    <Image src={`https://flagsapi.com/SG/flat/64.png`} alt='gambar cucing' width={100} height={100} sizes='100vw' className='absolute size-full object-cover object-center' />
-                                                </div>
-                                            ) : (
-                                                <div className='size-10 relative overflow-hidden rounded-full'>
-                                                    <Image src={`https://flagsapi.com/${cat.country_code}/flat/64.png` || '/img/countries.png'} alt='gambar cucing' width={100} height={100} sizes='100vw' className='absolute size-full object-cover object-center' />
-                                                </div>
-                                            )}
-
-                                        </div>
-                                    </div>
-
                                     <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow'>
-                                        <Image src={cat.image?.url ?? '/img/404-white.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
+                                        <Image src={cat.image?.url ?? '/img/404-black.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
+                                        <div className='w-full absolute h-[220px] bg-gradient-to-t from-black/80 bottom-0' />
+
+                                        <div className='flex flex-col gap-2 absolute bottom-4 left-4 '>
+                                            <span className='text-[20px] font-semibold text-gray-300'>{cat.name}</span>
+                                            <div className='flex items-center gap-2'>
+                                                <FaLocationDot className='size-5 text-gray-300' />
+                                                <span className='text-gray-300 font-semibold text-[16px]'>{cat.origin}</span>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className='flex flex-col rounded-[12px] gap-3 bg-white px-4 py-3 pb-4 shadow'>
@@ -288,24 +266,21 @@ const CatCard = () => {
                         {filteredData.map((cat) => {
                             const regex = new RegExp(`(${query})`, 'gi');
                             const catPart = cat.name.split(regex)
+                            const catOrigin = cat.origin.split(regex)
+
                             return (
 
                                 <div key={cat.id} className='w-full flex flex-col gap-3'>
-                                    <div className='flex items-center w-full justify-between'>
-                                        <div className='flex items-center gap-3 relative'>
-                                            <div className='size-10 flex items-center justify-center bg-black relative rounded-[8px] p-1' >
-                                                {cat.rare === 1 ? (
-                                                    <Image src={'/img/rare.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
-                                                ) : (
-                                                    <Image src={'/img/cat-white.png'} alt='gambar cucing' width={400} height={400} sizes='100vw' className='' />
-                                                )}
-                                            </div>
+                                    <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow'>
+                                        <Image src={cat.image?.url ?? '/img/404-black.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
+                                        <div className='w-full absolute h-[220px] bg-gradient-to-t from-black/80 bottom-0' />
 
-                                            <span className='text-[18px] font-semibold text-black'>
+                                        <div className='flex flex-col gap-2 absolute bottom-4 left-4 '>
+                                            <span className='text-[20px] font-semibold text-gray-300'>
                                                 {query ? (
                                                     catPart.map((part, i) => (
                                                         part.toLowerCase() === query.toLowerCase() ? (
-                                                            <span key={i} className='!text-primary'>{part}</span>
+                                                            <span key={i} className='bg-gradient-to-r from-primary to-[#FF7043] bg-clip-text text-transparent'>{part}</span>
                                                         ) : (
                                                             part
                                                         )
@@ -314,27 +289,23 @@ const CatCard = () => {
                                                     cat.name
                                                 )}
                                             </span>
+                                            <div className='flex items-center gap-2'>
+                                                <FaLocationDot className='size-5 text-gray-300' />
+                                                <span className='text-gray-300 font-semibold text-[16px]'>
+                                                    {query ? (
+                                                        catOrigin.map((part, i) => (
+                                                            part.toLowerCase() === query.toLowerCase() ? (
+                                                                <span key={i} className='bg-gradient-to-r from-primary to-[#FF7043] bg-clip-text text-transparent'>{part}</span>
+                                                            ) : (
+                                                                part
+                                                            )
+                                                        ))
+                                                    ) : (
+                                                        cat.origin
+                                                    )}
+                                                </span>
+                                            </div>
                                         </div>
-
-                                        <div className='group relative'>
-                                            <span className='px-3 py-2 bg-black/80 text-white rounded-[8px] absolute right-0 bottom-0 z-10 w-max opacity-0 group-hover:opacity-100 transition-all duration-300'>
-                                                {cat.origin}
-                                            </span>
-                                            {cat.country_code === 'SP' ? (
-                                                <div className='size-10 relative overflow-hidden rounded-full'>
-                                                    <Image src={`https://flagsapi.com/SG/flat/64.png`} alt='gambar cucing' width={100} height={100} sizes='100vw' className='absolute size-full object-cover object-center' />
-                                                </div>
-                                            ) : (
-                                                <div className='size-10 relative overflow-hidden rounded-full'>
-                                                    <Image src={`https://flagsapi.com/${cat.country_code}/flat/64.png` || '/img/countries.png'} alt='gambar cucing' width={100} height={100} sizes='100vw' className='absolute size-full object-cover object-center' />
-                                                </div>
-                                            )}
-
-                                        </div>
-                                    </div>
-
-                                    <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow'>
-                                        <Image src={cat.image?.url ?? '/img/404-white.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
                                     </div>
 
                                     <div className='flex flex-col rounded-[12px] gap-3 bg-white px-4 py-3 pb-4 shadow'>

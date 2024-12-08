@@ -84,4 +84,7 @@
     .mask-clip-path-3 {
         clip-path: polygon(85% 32%, 85% 45%, 71% 55%, 69% 37%);
     }
+    .mask-clip-path-car {
+        clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+    }
 }
