@@ -1,4 +1,4 @@
-import { fetchCat, fetchCatUnfiltered } from "@/lib/actions";
+import { fetchCat, fetchCatById, fetchCatUnfiltered } from "@/lib/actions";
 import { CatProps } from "@/types";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
@@ -23,3 +23,13 @@ export const useCat = () => {
         retry: 2,
     });
 };
+
+export const useCatById = (id: string) => {
+    return useQuery<CatProps | null, Error>({
+        queryKey: ['car', id],
+        queryFn: () => fetchCatById(id),
+        staleTime: 5 * 60 * 1000,
+        retry: 2,
+        // enabled: !id,
+    })
+}

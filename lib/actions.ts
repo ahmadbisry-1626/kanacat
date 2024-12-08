@@ -24,3 +24,16 @@ export const fetchCatUnfiltered = async (): Promise<CatProps[]> => {
         throw new Error("Failed to fetch cat")
     }
 }
+
+export const fetchCatById = async (id: string): Promise<CatProps> => {
+    try {
+        const response = await axiosInstance.get(`/breeds/search?name=${id}`)
+
+        console.log("data on server", response.data)
+
+        return response.data
+    } catch (error) {
+        console.log(error)
+        throw new Error("Failed to fetch cat")
+    }
+}
