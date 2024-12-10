@@ -14,8 +14,18 @@ import {
 import { Progress } from './ui/progress'
 import { FaCircleInfo } from 'react-icons/fa6'
 import { Slider } from './ui/slider'
+import { Switch } from './ui/switch'
+import Link from 'next/link'
 
-const WeightsSlider = ({ desc, firstValue, secondValue, metrics }: { desc: string, firstValue: number, secondValue: number, metrics: string }) => {
+const LinkCard = ({ imgUrl, name, logoName, link }: { imgUrl: string, name: string, logoName: string, link: string }) => {
+    return (
+        <Link href={link} target='blank' className='rounded-[12px] relative group overflow-hidden shadow'>
+            <Image src={imgUrl} alt={name} width={800} height={800} sizes='100vw' className='absolute size-full object-cover object-center' />
+        </Link>
+    )
+}
+
+const WeightsSlider = ({ desc, firstValue, secondValue, metrics, min, max }: { desc: string, firstValue: number, secondValue: number, metrics: string, min: string, max: string }) => {
     return (
         <div className='flex flex-col gap-3'>
             <div className='flex items-center gap-2'>
@@ -35,15 +45,51 @@ const WeightsSlider = ({ desc, firstValue, secondValue, metrics }: { desc: strin
             <HoverCard>
                 <HoverCardTrigger className='relative'>
                     <span className='absolute left-0 bottom-0 font-semibold translate-y-8'>
-                        0 KG
+                        {min}
                     </span>
                     <span className='absolute right-0 bottom-0 font-semibold translate-y-8'>
-                        15 KG
+                        {max}
                     </span>
                     <Slider defaultValue={[firstValue, secondValue]} max={15} disabled />
                 </HoverCardTrigger>
                 <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none w-fit break-words'>
                     {metrics}
+                </HoverCardContent>
+            </HoverCard>
+        </div>
+    )
+}
+
+const UniqueCharacters = ({ title, desc, label, checkedTrue, breedsInfo }: { title: string, desc: string, label: string, checkedTrue: boolean, breedsInfo: string }) => {
+    const [checked, setChecked] = useState(false)
+
+    useEffect(() => {
+        const timer = setTimeout(() => setChecked(checkedTrue), 800)
+        return () => clearTimeout(timer)
+    }, [])
+
+    return (
+        <div className='flex flex-col gap-3'>
+            <div className='items-center flex gap-2'>
+                <span className='md:text-[18px] font-semibold'>
+                    {title}
+                </span>
+                <HoverCard>
+                    <HoverCardTrigger className='group'>
+                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                    </HoverCardTrigger>
+                    <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none !w-96 break-words'>
+                        {desc}
+                    </HoverCardContent>
+                </HoverCard>
+            </div>
+            <HoverCard>
+                <HoverCardTrigger className='group flex items-center gap-2 w-max'>
+                    <Switch id={title} checked={checked} />
+                    <label htmlFor={title} className='font-semibold'>{label}</label>
+                </HoverCardTrigger>
+                <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none !w-80 break-words'>
+                    {breedsInfo}
                 </HoverCardContent>
             </HoverCard>
         </div>
@@ -56,7 +102,7 @@ const BehaviorComponent = ({ title, value, desc, style }: { title: string, value
     const [progress, setProgress] = useState(13)
 
     useEffect(() => {
-        const timer = setTimeout(() => setProgress(value), 500)
+        const timer = setTimeout(() => setProgress(value), 800)
         return () => clearTimeout(timer)
     }, [])
 
@@ -102,11 +148,10 @@ const CatDetails = ({ id }: { id: string }) => {
         return notFound()
     }
 
-    const weightString = car.weight.metric
-    const [minWeight, maxWeight] = weightString.split(" - ").map(Number)
+    const [minWeight, maxWeight] = car.weight.metric.split(" - ").map(Number)
 
     return (
-        <div className='w-full flex flex-col gap-5 py-10'>
+        <div className='w-full flex flex-col gap-5 py-4 pb-20'>
             <div className='grid grid-cols-3 gap-5 lg:h-[250px] md:h-[550px]'>
                 <div className='rounded-[12px] lg:col-span-2 col-span-3 flex items-start max-md:flex-col overflow-hidden bg-white shadow '>
                     <div className='md:w-[250px] w-full md:h-full h-[300px] relative flex-shrink-0'>
@@ -175,8 +220,8 @@ const CatDetails = ({ id }: { id: string }) => {
 
                 <div className='flex flex-col gap-2 max-lg:col-span-3'>
                     <h1 className='text-[24px] font-semibold'>Physical Attributes</h1>
-                    <div className='bg-white shadow h-full rounded-[12px] px-6 py-5'>
-                        <WeightsSlider desc='The weight range in kilograms' firstValue={minWeight} secondValue={maxWeight} metrics={`${car.weight.metric} Kilogram`} />
+                    <div className='bg-white shadow rounded-[12px] px-6 py-5'>
+                        <WeightsSlider desc='The weight range in kilograms' firstValue={minWeight} secondValue={maxWeight} metrics={`${car.weight.metric} Kilogram`} min='0 KG' max='15 KG' />
                         <BehaviorComponent title='Shedding' value={car.shedding_level} desc='Indicates how much the breed sheds (1 = low shedding, 5 = high shedding)' style='mt-12' />
                         <BehaviorComponent title='Grooming' value={car.grooming} desc='Indicates the grooming requirement (1 = minimal grooming, 5 = high grooming)' style='mt-5' />
                     </div>
@@ -185,6 +230,163 @@ const CatDetails = ({ id }: { id: string }) => {
                             <span key={i} className='rounded-[12px] bg-gray-100 text-gray-400 px-3 py-1 text-sm font-medium capitalize hover:bg-white hover:text-black transition-all duration-300 cursor-default shadow hover:scale-105'>{temp}</span>
                         ))}
                     </div>
+                </div>
+            </div>
+
+            <div className='grid grid-cols-3 gap-7 md:gap-5 lg:h-[300px] lg:mt-6 mt-4'>
+                <div className='flex flex-col gap-2 lg:col-span-2 col-span-3'>
+                    <h1 className='text-[24px] font-semibold'>Unique Characteristics</h1>
+                    <div className='bg-white shadow rounded-[12px] px-6 py-5 grid sm:grid-cols-3 grid-cols-2 gap-6'>
+                        <UniqueCharacters
+                            title='Experimental'
+                            desc="Whether this breed is part of experimental breeding programs"
+                            label={car.experimental === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.experimental === 1 ? true : false}
+                            breedsInfo={car.experimental === 1
+                                ? 'This is an experimental breed still under development'
+                                : 'This breed is well-established and recognized'
+                            } />
+                        <UniqueCharacters
+                            title='Rare'
+                            desc="Indicates if the breed is rare"
+                            label={car.rare === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.rare === 1 ? true : false}
+                            breedsInfo={car.rare === 1
+                                ? 'This is a rare breed, not commonly found worldwide'
+                                : 'This breed is widely available and relatively common'
+                            } />
+                        <UniqueCharacters
+                            title='Sits on Lap'
+                            desc="Indicates if the breed is likely to enjoy sitting on laps"
+                            label={car.lap === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.lap === 1 ? true : false}
+                            breedsInfo={car.lap === 1
+                                ? 'This breed enjoys sitting on laps and being close to people'
+                                : 'This breed may not be as inclined to sit on laps, preferring independent interaction'
+                            } />
+                        <UniqueCharacters
+                            title='Natural'
+                            desc="Indicates if the breed is a natural breed"
+                            label={car.natural === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.natural === 1 ? true : false}
+                            breedsInfo={car.natural === 1
+                                ? 'This breed developed naturally without significant human intervention'
+                                : 'This breed is a result of selective breeding'
+                            } />
+                        <UniqueCharacters
+                            title='Short Tail'
+                            desc="Indicates if the breed has a suppressed tail"
+                            label={car.suppressed_tail === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.suppressed_tail === 1 ? true : false}
+                            breedsInfo={car.suppressed_tail === 1
+                                ? 'This breed has a naturally short or suppressed tail'
+                                : 'This breed has a normal tail length'
+                            } />
+                        <UniqueCharacters
+                            title='Indoor'
+                            desc="Indicates if the breed is suitable for indoor living"
+                            label={car.indoor === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.indoor === 1 ? true : false}
+                            breedsInfo={car.indoor === 1
+                                ? 'This breed is well-suited for indoor living and prefers staying inside'
+                                : 'This breed is adaptable to both indoor and outdoor environments'
+                            } />
+                        <UniqueCharacters
+                            title='Short Legs'
+                            desc="Indicates if the breed has short legs"
+                            label={car.short_legs === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.short_legs === 1 ? true : false}
+                            breedsInfo={car.short_legs === 1
+                                ? 'This breed is characterized by its short legs'
+                                : 'This breed has average leg length'
+                            } />
+                        <UniqueCharacters
+                            title='Hairless'
+                            desc="Indicates if the breed is hairless"
+                            label={car.hairless === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.hairless === 1 ? true : false}
+                            breedsInfo={car.hairless === 1
+                                ? 'This breed is hairless and has a unique, smooth skin texture'
+                                : 'This breed has a typical fur coat'
+                            } />
+                        <UniqueCharacters
+                            title='Rex'
+                            desc="Indicates if the breed has a rex coat (curly)"
+                            label={car.rex === 1 ? 'Yes' : 'No'}
+                            checkedTrue={car.rex === 1 ? true : false}
+                            breedsInfo={car.rex === 1
+                                ? 'This breed has a distinctive curly or wavy coat'
+                                : 'This breed has a typical straight coat'
+                            } />
+                    </div>
+                </div>
+
+                <div className='flex flex-col max-lg:col-span-3 gap-2'>
+                    <h1 className='text-[24px] font-semibold'>Health and Care</h1>
+                    <div className='bg-white rounded-[12px] px-6 py-5 shadow flex flex-col gap-3'>
+                        <div className='flex flex-col gap-3'>
+                            <div className='flex items-center gap-2'>
+                                <span className='md:text-[18px] font-semibold'>
+                                    Health Issues
+                                </span>
+                                <HoverCard>
+                                    <HoverCardTrigger className='group'>
+                                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                                    </HoverCardTrigger>
+                                    <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none w-fit break-words'>
+                                        Indicates the breed's susceptibility to health problems
+                                    </HoverCardContent>
+                                </HoverCard>
+                            </div>
+
+                            <HoverCard>
+                                <HoverCardTrigger className='relative'>
+                                    <span className='absolute left-0 bottom-0 font-semibold translate-y-8'>
+                                        Low risk
+                                    </span>
+                                    <span className='absolute right-0 bottom-0 font-semibold translate-y-8'>
+                                        High risk
+                                    </span>
+                                    <Progress value={car.health_issues * 20} className='!h-3' />
+                                </HoverCardTrigger>
+                                <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none w-fit break-words'>
+                                    Health Issues: {car.health_issues}
+                                </HoverCardContent>
+                            </HoverCard>
+                        </div>
+                        <div className='flex flex-col gap-3 mt-10'>
+                            <div className='flex items-center gap-2'>
+                                <span className='md:text-[18px] font-semibold'>
+                                    Hypoallergenic
+                                </span>
+                                <HoverCard>
+                                    <HoverCardTrigger className='group'>
+                                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                                    </HoverCardTrigger>
+                                    <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none w-fit break-words'>
+                                        Indicates whether the breed is hypoallergenic
+                                    </HoverCardContent>
+                                </HoverCard>
+                            </div>
+                            <p className='font-medium bg-yellow-200'>
+                                {car.hypoallergenic === 1
+                                    ? 'This breed is considered hypoallergenic and may cause fewer allergic reactions'
+                                    : 'This breed is not hypoallergenic and may trigger allergies in sensitive individuals'
+                                }
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div className='w-full mt-4 lg:mt-6 flex flex-col gap-2'>
+                <h1 className='text-[24px] font-semibold'>Links</h1>
+                <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 md:gap-5 xl:h-[280px] lg:h-[600px] md:h-[680px] sm:h-[600px] h-[400px]'>
+                    <LinkCard imgUrl='/img/wikipedia.jpg' name='Wikipedia' logoName='W' link={car.wikipedia_url ?? '/'} />
+                    <LinkCard imgUrl='/img/cfa.jpg' name="Cat Fanciers' Association" logoName='CF' link={car.cfa_url ?? '/'} />
+                    <LinkCard imgUrl='/img/vca.jpg' name="Veterinary Centers of America" logoName='VA' link={car.vcahospitals_url ?? '/'} />
+                    <LinkCard imgUrl='/img/vetstreet.jpg' name="Vetstreet" logoName='VS' link={car.vetstreet_url ?? '/'} />
                 </div>
             </div>
         </div>

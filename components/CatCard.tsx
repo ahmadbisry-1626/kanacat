@@ -186,8 +186,8 @@ const CatCard = () => {
                         page.map((cat) => {
                             return (
                                 <div key={cat.id} className='w-full flex flex-col gap-3'>
-                                    <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow'>
-                                        <Image src={cat.image?.url ?? '/img/404-black.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full' loading='lazy' />
+                                    <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow group'>
+                                        <Image src={cat.image?.url ?? '/img/404-black.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full group-hover:scale-[1.02] transition-all duration-300' loading='lazy' />
                                         <div className='w-full absolute h-[220px] bg-gradient-to-t from-black/80 bottom-0' />
 
                                         <div className='flex flex-col gap-2 absolute bottom-4 left-4 '>
