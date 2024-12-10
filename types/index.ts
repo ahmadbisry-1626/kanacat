@@ -54,3 +54,11 @@ export type searchParams = {
     // searchParams: { [key: string]: string | string[] | undefined }
     searchParams: Promise<{ query: string, page: number }>
 }
+
+export type LikedCatProps = {
+    id: string,
+    user_id?: string,
+    image_id: string,
+    sub_id?: string,
+    created_at?: Date
+}

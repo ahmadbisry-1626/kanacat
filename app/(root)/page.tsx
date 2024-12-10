@@ -6,7 +6,7 @@ export default async function Home({ searchParams }: searchParams) {
     const query = (await searchParams).query
 
     return (
-        <main className="w-screen bg-white-background overflow-hidden">
+        <main className="w-full bg-white-background overflow-hidden">
             <HeroSection />
             <CatCard />
         </main>

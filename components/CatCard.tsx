@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { FaRegBookmark, FaRegHeart } from 'react-icons/fa';
+import { FaBookmark, FaCheckCircle, FaCircle, FaHeart, FaRegBookmark, FaRegHeart } from 'react-icons/fa';
 import { RxLink2 } from 'react-icons/rx';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -10,15 +10,22 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
 import SearchForm from './SearchForm';
 import FilterForm from './FilterForm';
-import { useCat, useInfiniteCat } from '@/hook/queries';
+import { useCat, useFavouriteCat, useInfiniteCat } from '@/hook/queries';
 import { useInView } from 'react-intersection-observer';
 import { FaLocationDot } from 'react-icons/fa6';
+import { deleteLikedCat, likedCatHandler } from '@/lib/actions';
+import { toast } from 'sonner';
 
 gsap.registerPlugin(ScrollTrigger)
 
 const CatCard = () => {
     const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteCat();
-    const { data: catData, isFetched } = useCat()
+    const { data: catData } = useCat()
+    const { data: favouriteCat, isFetched } = useFavouriteCat()
+
+    const [copied, setCopied] = useState<Record<string, boolean>>({})
+    const [likedCat, setLikedCat] = useState<Record<string, boolean>>({})
+    const [save, setSave] = useState<Record<string, boolean>>({})
     const [isOpen, setIsOpen] = useState(false)
     const [query, setIsQuery] = useState('')
     const [filter, setFilter] = useState({
@@ -32,6 +39,34 @@ const CatCard = () => {
         suppressedTail: false,
         shortLegs: false,
     })
+
+    const toggleLike = (id: string) => {
+        const favCatId = favouriteCat?.filter((cat) => cat.image_id === id);
+        const getFavCatId = favCatId?.[0]?.id;
+
+        const isLiked = likedCat[id];
+        setLikedCat((prev) => ({
+            ...prev,
+            [id]: !isLiked,
+        }))
+
+        {
+            !isLiked ? (
+                likedCatHandler(id),
+                console.log('Success', id)
+            ) : (
+                deleteLikedCat(getFavCatId ?? '')
+            )
+        }
+    }
+
+    const saveHandler = (id: string) => {
+        const isSaved = save[id]
+        setSave((prev) => ({
+            ...prev,
+            [id]: !isSaved
+        }))
+    }
 
     const { ref, inView } = useInView();
 
@@ -133,7 +168,7 @@ const CatCard = () => {
     const dataLength = data?.pages.map((page) => page.length).reduce((acc, val) => acc + val, 0)
 
     return (
-        <section className="w-full min-h-screen flex flex-col py-20 container mx-auto md:px-6 px-5 relative" id='header'>
+        <section className="w-full min-h-screen flex flex-col py-20 container mx-auto md:px-10 px-6 relative" id='header'>
             <div
                 className="flex flex-col items-center text-center gap-2 headline-container w-fit mx-auto"
                 ref={headlineRef}
@@ -167,7 +202,7 @@ const CatCard = () => {
                 </div>
             </div>
 
-            {isLoading ? (
+            {isLoading && !favouriteCat ? (
                 <div className='flex items-center justify-center h-[300px] w-full'>
                     <div className='loader' />
                 </div>
@@ -184,9 +219,11 @@ const CatCard = () => {
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10'>
                     {data?.pages.map((page) => (
                         page.map((cat) => {
+                            const likeCount = favouriteCat?.filter((fav) => fav.image_id === cat.id).length
+
                             return (
                                 <div key={cat.id} className='w-full flex flex-col gap-3'>
-                                    <div className='w-full h-[350px] overflow-hidden relative rounded-[12px] shadow group'>
+                                    <div className='w-full xl:h-[350px] lg:h-[300px] sm:h-[300px] h-[350px] overflow-hidden relative rounded-[12px] shadow group'>
                                         <Image src={cat.image?.url ?? '/img/404-black.jpg'} alt='gambar cucing' width={800} height={800} sizes='100vw' className='absolute object-cover object-top w-full h-full group-hover:scale-[1.02] transition-all duration-300' loading='lazy' />
                                         <div className='w-full absolute h-[220px] bg-gradient-to-t from-black/80 bottom-0' />
 
@@ -202,11 +239,58 @@ const CatCard = () => {
                                     <div className='flex flex-col rounded-[12px] gap-3 bg-white px-4 py-3 pb-4 shadow'>
                                         <div className='flex items-center justify-between'>
                                             <div className='flex items-center gap-3'>
-                                                <FaRegHeart className='size-6' />
-                                                <RxLink2 className='size-7' />
+                                                <button
+                                                    className="group relative"
+                                                    onClick={() => toggleLike(cat.id)}
+                                                >
+                                                    <FaRegHeart className="size-6 group-hover:scale-[1.03] transition-all duration-300" />
+                                                    <FaHeart
+                                                        className={`size-6 absolute z-10 text-red-500 top-0 opacity-0 ${likedCat[cat.id] && '!opacity-100 scale-105'
+                                                            } transition-all duration-300`}
+                                                    />
+                                                </button>
+
+                                                <button
+                                                    className={`group relative ${copied[cat.id] && 'cursor-default'}`}
+                                                    disabled={copied[cat.id]}
+                                                    onClick={async () => {
+                                                        await navigator.clipboard.writeText(`https://kanacat.vercel.app/cat/${cat.id}`)
+                                                        toast('Link copied to clipboard')
+                                                        setCopied((prev) => ({ ...prev, [cat.id]: true }))
+                                                        setTimeout(() => setCopied((prev) => ({ ...prev, [cat.id]: false })), 3000)
+                                                    }}>
+                                                    <span className={`size-6 absolute left-0 top-0 ${copied[cat.id] ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} transition-all duration-300 font-medium`}>
+                                                        Copied
+                                                    </span>
+                                                    <RxLink2 className={`size-7 group-hover:scale-[1.03] transition-all duration-300 ${copied[cat.id] ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`} />
+                                                </button>
                                             </div>
 
-                                            <FaRegBookmark className='size-6' />
+                                            <button
+                                                className="group relative"
+                                                onClick={() => saveHandler(cat.id)}
+                                            >
+                                                <FaRegBookmark className='size-6 group-hover:scale-[1.03] transition-all duration-300' />
+                                                <FaBookmark
+                                                    className={`size-6 absolute z-10 text-black top-0 opacity-0 ${save[cat.id] && '!opacity-100 scale-105'
+                                                        } transition-all duration-300`}
+                                                />
+                                            </button>
+
+                                        </div>
+
+                                        <div className='flex items-center gap-3 -mb-2'>
+                                            {isFetched ? (
+                                                <span className='font-semibold'>
+                                                    {likeCount} Likes
+                                                </span>
+                                            ) : (
+                                                <div className='flex items-center gap-1'>
+                                                    <FaCircle className='size-1.5 text-black animate-bounce' />
+                                                    <FaCircle className='size-1.5 text-black animate-bounce' style={{ animationDelay: '0.2s' }} />
+                                                    <FaCircle className='size-1.5 text-black animate-bounce' style={{ animationDelay: '0.4s' }} />
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className='flex flex-col gap-3'>
@@ -267,6 +351,7 @@ const CatCard = () => {
                             const regex = new RegExp(`(${query})`, 'gi');
                             const catPart = cat.name.split(regex)
                             const catOrigin = cat.origin.split(regex)
+                            const likeCount = favouriteCat?.filter((fav) => fav.image_id === cat.id).length
 
                             return (
 
@@ -311,11 +396,48 @@ const CatCard = () => {
                                     <div className='flex flex-col rounded-[12px] gap-3 bg-white px-4 py-3 pb-4 shadow'>
                                         <div className='flex items-center justify-between'>
                                             <div className='flex items-center gap-3'>
-                                                <FaRegHeart className='size-6' />
-                                                <RxLink2 className='size-7' />
+                                                <button
+                                                    className="group relative"
+                                                    onClick={() => toggleLike(cat.id)}
+                                                >
+                                                    <FaRegHeart className="size-6 group-hover:scale-[1.03] transition-all duration-300" />
+                                                    <FaHeart
+                                                        className={`size-6 absolute z-10 text-red-500 top-0 opacity-0 ${likedCat[cat.id] && '!opacity-100 scale-105'
+                                                            } transition-all duration-300`}
+                                                    />
+                                                </button>
+
+                                                <button
+                                                    className={`group relative ${copied[cat.id] && 'cursor-default'}`}
+                                                    disabled={copied[cat.id]}
+                                                    onClick={async () => {
+                                                        await navigator.clipboard.writeText(`https://kanacat.vercel.app/cat/${cat.id}`)
+                                                        toast('Link copied to clipboard')
+                                                        setCopied((prev) => ({ ...prev, [cat.id]: true }))
+                                                        setTimeout(() => setCopied((prev) => ({ ...prev, [cat.id]: false })), 3000)
+                                                    }}>
+                                                    <span className={`size-6 absolute left-0 top-0 ${copied[cat.id] ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} transition-all duration-300 font-medium`}>
+                                                        Copied
+                                                    </span>
+                                                    <RxLink2 className={`size-7 group-hover:scale-[1.03] transition-all duration-300 ${copied[cat.id] ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`} />
+                                                </button>
                                             </div>
 
                                             <FaRegBookmark className='size-6' />
+                                        </div>
+
+                                        <div className='flex items-center gap-3 -mb-2'>
+                                            {isFetched ? (
+                                                <span className='font-semibold'>
+                                                    {likeCount} Likes
+                                                </span>
+                                            ) : (
+                                                <div className='flex items-center gap-1'>
+                                                    <FaCircle className='size-1.5 text-black animate-bounce' />
+                                                    <FaCircle className='size-1.5 text-black animate-bounce' style={{ animationDelay: '0.2s' }} />
+                                                    <FaCircle className='size-1.5 text-black animate-bounce' style={{ animationDelay: '0.4s' }} />
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className='flex flex-col gap-3'>

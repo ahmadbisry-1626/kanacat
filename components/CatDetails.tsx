@@ -1,7 +1,7 @@
 "use client"
 
 import { useCat } from '@/hook/queries'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { ScrollArea } from './ui/scroll-area'
@@ -16,6 +16,7 @@ import { FaCircleInfo } from 'react-icons/fa6'
 import { Slider } from './ui/slider'
 import { Switch } from './ui/switch'
 import Link from 'next/link'
+import gsap from 'gsap';
 
 const LinkCard = ({ imgUrl, name, logoName, link }: { imgUrl: string, name: string, logoName: string, link: string }) => {
     return (
@@ -134,15 +135,18 @@ const BehaviorComponent = ({ title, value, desc, style }: { title: string, value
     )
 }
 
-
-
 const CatDetails = ({ id }: { id: string }) => {
     const { data: cat, isLoading, isError } = useCat()
+    const cardRef = useRef<HTMLDivElement>(null)
 
     const car = cat?.find((cat) => cat.id === id)
 
     if (isLoading) {
-        return <span>loading</span>
+        return (
+            <div className='w-full min-h-screen absolute top-0 left-0 flex items-center justify-center'>
+                <div className='loader'/>
+            </div>
+        )
     }
 
     if (isError || !cat || !car) {
@@ -165,10 +169,46 @@ const CatDetails = ({ id }: { id: string }) => {
 
     const activeLinksCount = link.filter((url) => url.length > 0).length
 
+    const handleMouseMove = (e: any) => {
+        const elemen = cardRef.current
+        if (!elemen) return
+
+        const { left, top, height, width } = elemen.getBoundingClientRect()
+
+        const relativeX = (e.clientX - left) / width
+        const relativeY = (e.clientY - top) / height
+
+        const tiltX = (relativeY - 0.5) * 5
+        const tiltY = (relativeX - 0.5) * -5
+
+        gsap.to(elemen, {
+            rotateY: tiltY,
+            rotateX: tiltX,
+            translateZ: (relativeY - 0.5) * 10,
+            transformPerspective: 700,
+            ease: 'power3.out',
+            duration: 0.5,
+        })
+
+    }
+
+    const handleMouseLeave = () => {
+        const elemen = cardRef.current
+        if (!elemen) return
+
+        gsap.to(elemen, {
+            rotateY: 0,
+            rotateX: 0,
+            translateZ: 0,
+            ease: 'power3.out',
+            duration: 0.5,
+        })
+    }
+
     return (
         <div className='w-full flex flex-col gap-5 py-4 pb-20'>
             <div className='grid grid-cols-3 gap-5 lg:h-[250px] md:h-[550px]'>
-                <div className='rounded-[12px] lg:col-span-2 col-span-3 flex items-start max-md:flex-col overflow-hidden bg-white shadow '>
+                <div className='rounded-[12px] lg:col-span-2 col-span-3 flex items-start max-md:flex-col overflow-hidden bg-white shadow' ref={cardRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
                     <div className='md:w-[250px] w-full md:h-full h-[300px] relative flex-shrink-0'>
                         <Image src={car.image?.url ?? '/img/404-white.jpg'} alt='sdasda' width={800} height={800} sizes='100vw' className='absolute size-full object-cover object-top' />
                     </div>
@@ -220,7 +260,7 @@ const CatDetails = ({ id }: { id: string }) => {
             <div className='grid grid-cols-3 gap-7 md:gap-5 lg:h-[420px] mt-4'>
                 <div className='flex flex-col gap-2 lg:col-span-2 col-span-3'>
                     <h1 className='text-[20px] sm:text-[24px] font-semibold'>Behavior</h1>
-                    <div className='bg-white shadow rounded-[12px] px-6 py-5 grid grid-cols-2 gap-6'>
+                    <div className='bg-white shadow rounded-[12px] px-6 py-5 grid grid-cols-2 gap-6 behavior'>
                         <BehaviorComponent title='Adaptability' value={car.adaptability} desc='How well the breed adapts to new environments (1 = low adaptability, 5 = high adaptability)' />
                         <BehaviorComponent title='Affection' value={car.affection_level} desc='How affectionate the breed is (1 = low, 5 = high)' />
                         <BehaviorComponent title='Energy' value={car.energy_level} desc='How energetic the breed is (1 = low, 5 = high)' />
@@ -235,7 +275,7 @@ const CatDetails = ({ id }: { id: string }) => {
 
                 <div className='flex flex-col gap-2 max-lg:col-span-3'>
                     <h1 className='text-[20px] sm:text-[24px] font-semibold'>Physical Attributes</h1>
-                    <div className='bg-white shadow rounded-[12px] px-6 py-5'>
+                    <div className='bg-white shadow rounded-[12px] px-6 py-5 physical-att'>
                         <WeightsSlider desc='The weight range in kilograms' firstValue={minWeight} secondValue={maxWeight} metrics={`${car.weight.metric} Kilogram`} min='0 KG' max='15 KG' />
                         <BehaviorComponent title='Shedding' value={car.shedding_level} desc='Indicates how much the breed sheds (1 = low shedding, 5 = high shedding)' style='mt-12' />
                         <BehaviorComponent title='Grooming' value={car.grooming} desc='Indicates the grooming requirement (1 = minimal grooming, 5 = high grooming)' style='mt-5' />
@@ -251,7 +291,7 @@ const CatDetails = ({ id }: { id: string }) => {
             <div className='grid grid-cols-3 gap-7 md:gap-5 lg:h-[300px] lg:mt-6 mt-4'>
                 <div className='flex flex-col gap-2 lg:col-span-2 col-span-3'>
                     <h1 className='text-[20px] sm:text-[24px] font-semibold'>Unique Characteristics</h1>
-                    <div className='bg-white shadow rounded-[12px] px-6 py-5 grid sm:grid-cols-3 grid-cols-2 gap-6'>
+                    <div className='bg-white shadow rounded-[12px] px-6 py-5 grid sm:grid-cols-3 grid-cols-2 gap-6 unique-char'>
                         <UniqueCharacters
                             title='Experimental'
                             desc="Whether this breed is part of experimental breeding programs"
@@ -338,7 +378,7 @@ const CatDetails = ({ id }: { id: string }) => {
 
                 <div className='flex flex-col max-lg:col-span-3 gap-2'>
                     <h1 className='text-[20px] sm:text-[24px] font-semibold'>Health and Care</h1>
-                    <div className='bg-white rounded-[12px] px-6 py-5 shadow flex flex-col gap-3'>
+                    <div className='bg-white rounded-[12px] px-6 py-5 shadow flex flex-col gap-3 health-care'>
                         <div className='flex flex-col gap-3'>
                             <div className='flex items-center gap-2'>
                                 <span className='md:text-[18px] font-semibold'>
@@ -398,7 +438,7 @@ const CatDetails = ({ id }: { id: string }) => {
             {activeLinksCount > 0 && (
                 <div className='w-full mt-4 lg:mt-6 flex flex-col gap-2'>
                     <h1 className='text-[20px] sm:text-[24px] font-semibold'>Related Links</h1>
-                    <div className='sm:flex hidden items-center gap-5'>
+                    <div className='sm:flex hidden items-center gap-5 links-card'>
                         {wiki && (
                             <LinkCard imgUrl='/img/wikipedia.jpg' name='Wikipedia' logoName='W' link={car.wikipedia_url ?? '/'} />
                         )}
@@ -414,7 +454,7 @@ const CatDetails = ({ id }: { id: string }) => {
                     </div>
 
                     {/* Mobile */}
-                    <div className='flex sm:hidden gap-5 flex-col'>
+                    <div className='flex sm:hidden gap-5 flex-col links-card'>
                         <div className='flex items-center gap-5'>
                             {wiki && (
                                 <LinkCard imgUrl='/img/wikipedia.jpg' name='Wikipedia' logoName='W' link={car.wikipedia_url ?? '/'} />
@@ -424,7 +464,7 @@ const CatDetails = ({ id }: { id: string }) => {
                             )}
                         </div>
 
-                        <div className='flex items-center gap-5'>
+                        <div className='flex items-center gap-5' >
                             {vca && (
                                 <LinkCard imgUrl='/img/vca.jpg' name="Veterinary Centers of America" logoName='VA' link={car.vcahospitals_url ?? '/'} />
                             )}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const parkinsans = localFont({
     src: [
@@ -56,6 +57,7 @@ export default function RootLayout({
             >
                 <Providers>
                     {children}
+                    <Toaster position="top-center"/>
                 </Providers>
             </body>
         </html>
