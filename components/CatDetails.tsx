@@ -20,7 +20,7 @@ import Link from 'next/link'
 const LinkCard = ({ imgUrl, name, logoName, link }: { imgUrl: string, name: string, logoName: string, link: string }) => {
     return (
         <Link href={link} target='blank' className='rounded-[12px] relative group overflow-hidden shadow'>
-            <div className='size-full bg-black/40 absolute z-10 opacity-0 group-hover:opacity-100 transition-all duration-300'/>
+            <div className='size-full bg-black/40 absolute z-10 opacity-0 group-hover:opacity-100 transition-all duration-300' />
             <Image src={imgUrl} alt={name} width={800} height={800} sizes='100vw' className='absolute size-full object-cover object-center' />
         </Link>
     )
@@ -138,6 +138,9 @@ const BehaviorComponent = ({ title, value, desc, style }: { title: string, value
 
 const CatDetails = ({ id }: { id: string }) => {
     const { data: cat, isLoading, isError } = useCat()
+    const [twoActive, setTwoActive] = useState(false)
+    const [oneActive, setOneActive] = useState(false)
+    const [threeActive, setThreeActive] = useState(false)
 
     const car = cat?.find((cat) => cat.id === id)
 
@@ -150,6 +153,27 @@ const CatDetails = ({ id }: { id: string }) => {
     }
 
     const [minWeight, maxWeight] = car.weight.metric.split(" - ").map(Number)
+    const cfa = (car.cfa_url?.length ?? 0) > 0
+    const vca = (car.vcahospitals_url?.length ?? 0) > 0
+    const vet = (car.vetstreet_url?.length ?? 0) > 0
+    const wiki = (car.wikipedia_url?.length ?? 0) > 0
+
+    useEffect(() => {
+        if (!car) return;
+
+        const links = [
+            car.cfa_url ?? "",
+            car.vcahospitals_url ?? "",
+            car.vetstreet_url ?? "",
+            car.wikipedia_url ?? "",
+        ];
+
+        const activeLinksCount = links.filter((url) => url.length > 0).length;
+
+        setThreeActive(activeLinksCount === 3);
+        setTwoActive(activeLinksCount === 2);
+        setOneActive(activeLinksCount === 1);
+    }, [car]);
 
     return (
         <div className='w-full flex flex-col gap-5 py-4 pb-20'>
@@ -215,7 +239,7 @@ const CatDetails = ({ id }: { id: string }) => {
                         <BehaviorComponent title='Dog Friendly' value={car.dog_friendly} desc='How well the breed gets along with dogs (1 = not dog-friendly, 5 = very dog-friendly)' />
                         <BehaviorComponent title='Kid Friendly' value={car.child_friendly} desc='How well the breed gets along with children (1 = not very child-friendly, 5 = very child-friendly)' />
                         <BehaviorComponent title='Vocalisation' value={car.vocalisation} desc='How vocal the breed is (1 = quiet, 5 = very vocal)' />
-                        <BehaviorComponent title='Stranger Friendly' value={car.stranger_friendly} desc='How friendly the breed is with strangers (1 = shy, 5 = very friendly)' style='max-md:col-span-2'/>
+                        <BehaviorComponent title='Stranger Friendly' value={car.stranger_friendly} desc='How friendly the breed is with strangers (1 = shy, 5 = very friendly)' style='max-md:col-span-2' />
                     </div>
                 </div>
 
@@ -383,11 +407,19 @@ const CatDetails = ({ id }: { id: string }) => {
 
             <div className='w-full mt-4 lg:mt-6 flex flex-col gap-2'>
                 <h1 className='text-[20px] sm:text-[24px] font-semibold'>Related Links</h1>
-                <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 md:gap-5 xl:h-[280px] lg:h-[600px] md:h-[680px] sm:h-[600px] h-[350px]'>
-                    <LinkCard imgUrl='/img/wikipedia.jpg' name='Wikipedia' logoName='W' link={car.wikipedia_url ?? '/'} />
-                    <LinkCard imgUrl='/img/cfa.jpg' name="Cat Fanciers' Association" logoName='CF' link={car.cfa_url ?? '/'} />
-                    <LinkCard imgUrl='/img/vca.jpg' name="Veterinary Centers of America" logoName='VA' link={car.vcahospitals_url ?? '/'} />
-                    <LinkCard imgUrl='/img/vetstreet.jpg' name="Vetstreet" logoName='VS' link={car.vetstreet_url ?? '/'} />
+                <div className={`grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 md:gap-5 xl:h-[280px] ${twoActive ? 'lg:h-[300px] md:h-[350px] sm:h-[300px] h-[200px]' : 'lg:h-[600px] md:h-[680px] sm:h-[600px] h-[350px]'} ${oneActive ? 'lg:h-[240px] md:h-[350px] sm:h-[250px] h-[180px]' : 'lg:h-[600px] md:h-[680px] sm:h-[600px] h-[350px]'} ${threeActive ? 'lg:h-[290px] md:h-[550px] sm:h-[600px] h-[400px]' : 'lg:h-[600px] md:h-[680px] sm:h-[600px] h-[350px]'}`}>
+                    {wiki && (
+                        <LinkCard imgUrl='/img/wikipedia.jpg' name='Wikipedia' logoName='W' link={car.wikipedia_url ?? '/'} />
+                    )}
+                    {cfa && (
+                        <LinkCard imgUrl='/img/cfa.jpg' name="Cat Fanciers' Association" logoName='CF' link={car.cfa_url ?? '/'} />
+                    )}
+                    {vca && (
+                        <LinkCard imgUrl='/img/vca.jpg' name="Veterinary Centers of America" logoName='VA' link={car.vcahospitals_url ?? '/'} />
+                    )}
+                    {vet && (
+                        <LinkCard imgUrl='/img/vetstreet.jpg' name="Vetstreet" logoName='VS' link={car.vetstreet_url ?? '/'} />
+                    )}
                 </div>
             </div>
         </div>

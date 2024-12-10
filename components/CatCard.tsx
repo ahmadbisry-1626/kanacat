@@ -222,7 +222,7 @@ const CatCard = () => {
                                                 ))}
                                             </div>
                                         </div>
-                                        <Button className='w-full h-[50px] rounded-[12px] !bg-black mt-7' size={"lg"} asChild>
+                                        <Button className='w-full h-[50px] rounded-[12px] !bg-black mt-7 hover:!bg-primary transition-all duration-300' size={"lg"} asChild>
                                             <Link href={`/cat/${cat.id}`}>
                                                 Details
                                             </Link>
@@ -331,7 +331,7 @@ const CatCard = () => {
                                                 ))}
                                             </div>
                                         </div>
-                                        <Button className='w-full h-[50px] rounded-[12px] !bg-black mt-7' size={"lg"} asChild>
+                                        <Button className='w-full h-[50px] rounded-[12px] !bg-black mt-7 hover:!bg-primary transition-all duration-300' size={"lg"} asChild>
                                             <Link href={`/cat/${cat.id}`}>
                                                 Details
                                             </Link>
