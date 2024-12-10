@@ -20,6 +20,7 @@ import Link from 'next/link'
 const LinkCard = ({ imgUrl, name, logoName, link }: { imgUrl: string, name: string, logoName: string, link: string }) => {
     return (
         <Link href={link} target='blank' className='rounded-[12px] relative group overflow-hidden shadow'>
+            <div className='size-full bg-black/40 absolute z-10 opacity-0 group-hover:opacity-100 transition-all duration-300'/>
             <Image src={imgUrl} alt={name} width={800} height={800} sizes='100vw' className='absolute size-full object-cover object-center' />
         </Link>
     )
@@ -34,7 +35,7 @@ const WeightsSlider = ({ desc, firstValue, secondValue, metrics, min, max }: { d
                 </span>
                 <HoverCard>
                     <HoverCardTrigger className='group'>
-                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                        <FaCircleInfo className='text-gray-400 size-4 md:size-5 group-hover:text-black transitiona-ll duration-300' />
                     </HoverCardTrigger>
                     <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none w-fit break-words'>
                         {desc}
@@ -76,7 +77,7 @@ const UniqueCharacters = ({ title, desc, label, checkedTrue, breedsInfo }: { tit
                 </span>
                 <HoverCard>
                     <HoverCardTrigger className='group'>
-                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                        <FaCircleInfo className='text-gray-400 size-4 ms:size-5 group-hover:text-black transitiona-ll duration-300' />
                     </HoverCardTrigger>
                     <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none !w-96 break-words'>
                         {desc}
@@ -114,7 +115,7 @@ const BehaviorComponent = ({ title, value, desc, style }: { title: string, value
                 </span>
                 <HoverCard>
                     <HoverCardTrigger className='group'>
-                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                        <FaCircleInfo className='text-gray-400 size-4 sm:size-5 group-hover:text-black transitiona-ll duration-300' />
                     </HoverCardTrigger>
                     <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none !w-96 break-words'>
                         {desc}
@@ -190,7 +191,7 @@ const CatDetails = ({ id }: { id: string }) => {
                 <HoverCard>
                     <HoverCardTrigger className='max-lg:col-span-3'>
                         <div className='rounded-[12px] relative'>
-                            <span className='absolute right-4 top-0  text-black font-semibold text-[24px]'>
+                            <span className='absolute right-4 top-0  text-black font-semibold text-[20px] sm:text-[24px]'>
                                 Lifespan
                             </span>
                             <NivoPieChart name={`${car.life_span} years`} value={400} secondValue={80} height={250} top={20} bottom={20} style='md:!h-[250px] !h-[180px]' />
@@ -204,22 +205,22 @@ const CatDetails = ({ id }: { id: string }) => {
 
             <div className='grid grid-cols-3 gap-7 md:gap-5 lg:h-[420px] mt-4'>
                 <div className='flex flex-col gap-2 lg:col-span-2 col-span-3'>
-                    <h1 className='text-[24px] font-semibold'>Behavior</h1>
+                    <h1 className='text-[20px] sm:text-[24px] font-semibold'>Behavior</h1>
                     <div className='bg-white shadow rounded-[12px] px-6 py-5 grid grid-cols-2 gap-6'>
                         <BehaviorComponent title='Adaptability' value={car.adaptability} desc='How well the breed adapts to new environments (1 = low adaptability, 5 = high adaptability)' />
                         <BehaviorComponent title='Affection' value={car.affection_level} desc='How affectionate the breed is (1 = low, 5 = high)' />
                         <BehaviorComponent title='Energy' value={car.energy_level} desc='How energetic the breed is (1 = low, 5 = high)' />
                         <BehaviorComponent title='Intelligence' value={car.intelligence} desc='How intelligent the breed is (1 = low, 5 = high)' />
                         <BehaviorComponent title='Social Needs' value={car.social_needs} desc='How much social interaction the breed requires (1 = low, 5 = high)' />
-                        <BehaviorComponent title='Stranger Friendly' value={car.stranger_friendly} desc='How friendly the breed is with strangers (1 = shy, 5 = very friendly)' />
-                        <BehaviorComponent title='Child Friendly' value={car.child_friendly} desc='How well the breed gets along with children (1 = not very child-friendly, 5 = very child-friendly)' />
                         <BehaviorComponent title='Dog Friendly' value={car.dog_friendly} desc='How well the breed gets along with dogs (1 = not dog-friendly, 5 = very dog-friendly)' />
+                        <BehaviorComponent title='Kid Friendly' value={car.child_friendly} desc='How well the breed gets along with children (1 = not very child-friendly, 5 = very child-friendly)' />
                         <BehaviorComponent title='Vocalisation' value={car.vocalisation} desc='How vocal the breed is (1 = quiet, 5 = very vocal)' />
+                        <BehaviorComponent title='Stranger Friendly' value={car.stranger_friendly} desc='How friendly the breed is with strangers (1 = shy, 5 = very friendly)' style='max-md:col-span-2'/>
                     </div>
                 </div>
 
                 <div className='flex flex-col gap-2 max-lg:col-span-3'>
-                    <h1 className='text-[24px] font-semibold'>Physical Attributes</h1>
+                    <h1 className='text-[20px] sm:text-[24px] font-semibold'>Physical Attributes</h1>
                     <div className='bg-white shadow rounded-[12px] px-6 py-5'>
                         <WeightsSlider desc='The weight range in kilograms' firstValue={minWeight} secondValue={maxWeight} metrics={`${car.weight.metric} Kilogram`} min='0 KG' max='15 KG' />
                         <BehaviorComponent title='Shedding' value={car.shedding_level} desc='Indicates how much the breed sheds (1 = low shedding, 5 = high shedding)' style='mt-12' />
@@ -235,7 +236,7 @@ const CatDetails = ({ id }: { id: string }) => {
 
             <div className='grid grid-cols-3 gap-7 md:gap-5 lg:h-[300px] lg:mt-6 mt-4'>
                 <div className='flex flex-col gap-2 lg:col-span-2 col-span-3'>
-                    <h1 className='text-[24px] font-semibold'>Unique Characteristics</h1>
+                    <h1 className='text-[20px] sm:text-[24px] font-semibold'>Unique Characteristics</h1>
                     <div className='bg-white shadow rounded-[12px] px-6 py-5 grid sm:grid-cols-3 grid-cols-2 gap-6'>
                         <UniqueCharacters
                             title='Experimental'
@@ -322,7 +323,7 @@ const CatDetails = ({ id }: { id: string }) => {
                 </div>
 
                 <div className='flex flex-col max-lg:col-span-3 gap-2'>
-                    <h1 className='text-[24px] font-semibold'>Health and Care</h1>
+                    <h1 className='text-[20px] sm:text-[24px] font-semibold'>Health and Care</h1>
                     <div className='bg-white rounded-[12px] px-6 py-5 shadow flex flex-col gap-3'>
                         <div className='flex flex-col gap-3'>
                             <div className='flex items-center gap-2'>
@@ -331,7 +332,7 @@ const CatDetails = ({ id }: { id: string }) => {
                                 </span>
                                 <HoverCard>
                                     <HoverCardTrigger className='group'>
-                                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                                        <FaCircleInfo className='text-gray-400 size-4 sm:size-5 group-hover:text-black transitiona-ll duration-300' />
                                     </HoverCardTrigger>
                                     <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none w-fit break-words'>
                                         Indicates the breed's susceptibility to health problems
@@ -361,7 +362,7 @@ const CatDetails = ({ id }: { id: string }) => {
                                 </span>
                                 <HoverCard>
                                     <HoverCardTrigger className='group'>
-                                        <FaCircleInfo className='text-gray-400 size-5 group-hover:text-black transitiona-ll duration-300' />
+                                        <FaCircleInfo className='text-gray-400 size-4 sm:size-5 group-hover:text-black transitiona-ll duration-300' />
                                     </HoverCardTrigger>
                                     <HoverCardContent className='rounded-[12px] bg-black/80 text-white border-none w-fit break-words'>
                                         Indicates whether the breed is hypoallergenic
@@ -381,8 +382,8 @@ const CatDetails = ({ id }: { id: string }) => {
             </div>
 
             <div className='w-full mt-4 lg:mt-6 flex flex-col gap-2'>
-                <h1 className='text-[24px] font-semibold'>Links</h1>
-                <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 md:gap-5 xl:h-[280px] lg:h-[600px] md:h-[680px] sm:h-[600px] h-[400px]'>
+                <h1 className='text-[20px] sm:text-[24px] font-semibold'>Related Links</h1>
+                <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 md:gap-5 xl:h-[280px] lg:h-[600px] md:h-[680px] sm:h-[600px] h-[350px]'>
                     <LinkCard imgUrl='/img/wikipedia.jpg' name='Wikipedia' logoName='W' link={car.wikipedia_url ?? '/'} />
                     <LinkCard imgUrl='/img/cfa.jpg' name="Cat Fanciers' Association" logoName='CF' link={car.cfa_url ?? '/'} />
                     <LinkCard imgUrl='/img/vca.jpg' name="Veterinary Centers of America" logoName='VA' link={car.vcahospitals_url ?? '/'} />
