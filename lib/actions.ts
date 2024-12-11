@@ -1,7 +1,7 @@
 "use server"
 
 import { axiosInstance, axiosLikedCat } from "@/hook/client"
-import { CatProps, LikedCatProps } from "@/types"
+import { CatProps, LikedCatProps, LikedCatResponse } from "@/types"
 import { QueryFunctionContext } from "@tanstack/react-query";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -50,29 +50,58 @@ export const fetchFavouriteCat = async (): Promise<LikedCatProps[]> => {
     }
 }
 
-export const likedCatHandler = async (image_id: string) => {
+export const likedCatHandler = async (image_id: string): Promise<LikedCatResponse> => {
     try {
         const response = await axiosLikedCat.post('', {
             image_id: image_id,
-            sub_id: uuidv4()
-        })
+            sub_id: uuidv4(),
+            value: 1,
+        });
 
-        console.log("liked cat", response.data)
-        return response.data
+        console.log("liked cat", response.data);
+        return response.data; // This should match LikedCatResponse
     } catch (error) {
-        console.error(error)
-        throw new Error("Failed to like cat")
+        console.error(error);
+        throw new Error("Failed to like cat");
     }
-}
+};
 
-export const deleteLikedCat = async (id: string) => {
+export const deleteLikedCat = async (id: string): Promise<{ message: string }> => {
     try {
-        const response = await axiosLikedCat.delete(`/${id}`)
-
-        console.log("deleted cat", response.data)
-        return response.data
+        const response = await axiosLikedCat.delete(`/${id}`);
+        console.log("deleted cat", response.data);
+        return response.data; // Ensure this matches the return type
     } catch (error) {
-        console.error(error)
-        throw new Error("Failed to delete cat")
+        console.error(error);
+        throw new Error("Failed to delete cat");
     }
-}
+};
+
+
+// export const likedCatHandler = async (image_id: string) => {
+//     try {
+//         const response = await axiosLikedCat.post('', {
+//             image_id: image_id,
+//             sub_id: uuidv4(),
+//             value: 1
+//         })
+
+//         console.log("liked cat", response.data)
+//         return response.data
+//     } catch (error) {
+//         console.error(error)
+//         throw new Error("Failed to like cat")
+//     }
+// }
+
+// export const deleteLikedCat = async (id: string) => {
+//     try {
+//         const response = await axiosLikedCat.delete(`/${id}`)
+
+//         console.log("deleted cat", response.data)
+//         return response.data
+//     } catch (error) {
+//         console.error(error)
+//         throw new Error("Failed to delete cat")
+//     }
+// }

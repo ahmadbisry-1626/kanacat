@@ -15,10 +15,13 @@ import { useInView } from 'react-intersection-observer';
 import { FaLocationDot } from 'react-icons/fa6';
 import { deleteLikedCat, likedCatHandler } from '@/lib/actions';
 import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { LikedCatProps, LikedCatResponse } from '@/types';
 
 gsap.registerPlugin(ScrollTrigger)
 
 const CatCard = () => {
+    const queryClient = useQueryClient();
     const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteCat();
     const { data: catData } = useCat()
     const { data: favouriteCat, isFetched } = useFavouriteCat()
@@ -40,9 +43,56 @@ const CatCard = () => {
         shortLegs: false,
     })
 
+    const likeMutation = useMutation<LikedCatResponse, Error, string>({
+        mutationFn: likedCatHandler,
+        onMutate: async (image_id: string) => {
+            await queryClient.cancelQueries({ queryKey: ['favouriteCat'] });
+            const previousFavouriteCat = queryClient.getQueryData<LikedCatProps[]>(['favouriteCat']);
+            if (previousFavouriteCat) {
+                queryClient.setQueryData<LikedCatProps[]>(['favouriteCat'], (oldData) => [
+                    ...oldData!,
+                    { image_id, id: `temp-${image_id}`, value: 1 },
+                ]);
+            }
+            return { previousFavouriteCat };
+        },
+        onError: (err: Error, image_id: string, context: unknown) => {
+            const typedContext = context as { previousFavouriteCat: LikedCatProps[] | undefined } | undefined;
+            if (typedContext?.previousFavouriteCat) {
+                queryClient.setQueryData(['favouriteCat'], typedContext.previousFavouriteCat);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['favouriteCat'] });
+        },
+    });
+
+    const unlikeMutation = useMutation<{ message: string }, Error, string>({
+        mutationFn: deleteLikedCat,
+        onMutate: async (id: string) => {
+            await queryClient.cancelQueries({ queryKey: ['favouriteCat'] });
+            const previousFavouriteCat = queryClient.getQueryData<LikedCatProps[]>(['favouriteCat']);
+            if (previousFavouriteCat) {
+                queryClient.setQueryData<LikedCatProps[]>(['favouriteCat'], (oldData) =>
+                    oldData?.filter((cat) => cat.id !== id) || []
+                );
+            }
+            return { previousFavouriteCat };
+        },
+        onError: (err: Error, id: string, context: unknown) => {
+            const typedContext = context as { previousFavouriteCat: LikedCatProps[] | undefined } | undefined;
+            if (typedContext?.previousFavouriteCat) {
+                queryClient.setQueryData(['favouriteCat'], typedContext.previousFavouriteCat);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['favouriteCat'] });
+        },
+    });
+
+
     const toggleLike = (id: string) => {
-        const favCatId = favouriteCat?.filter((cat) => cat.image_id === id);
-        const getFavCatId = favCatId?.[0]?.id;
+        const favCatId = favouriteCat?.find((cat) => cat.image_id === id)?.id;
 
         const isLiked = likedCat[id];
         setLikedCat((prev) => ({
@@ -50,15 +100,34 @@ const CatCard = () => {
             [id]: !isLiked,
         }))
 
-        {
-            !isLiked ? (
-                likedCatHandler(id),
-                console.log('Success', id)
-            ) : (
-                deleteLikedCat(getFavCatId ?? '')
-            )
+        if (!isLiked) {
+            likeMutation.mutate(id); // Like the cat
+            console.log('liked', id)
+        } else {
+            unlikeMutation.mutate(favCatId ?? ''); // Unlike the cat
+            console.log('unliked', id)
         }
-    }
+    };
+
+
+    // const toggleLike = (id: string) => {
+    //     const favCatId = favouriteCat?.filter((cat) => cat.image_id === id);
+    //     const getFavCatId = favCatId?.[0]?.id;
+
+    //     const isLiked = likedCat[id];
+    //     setLikedCat((prev) => ({
+    //         ...prev,
+    //         [id]: !isLiked,
+    //     }))
+
+    //     {
+    //         !isLiked ? (
+    //             likedCatHandler(id)
+    //         ) : (
+    //             deleteLikedCat(getFavCatId ?? '')
+    //         )
+    //     }
+    // }
 
     const saveHandler = (id: string) => {
         const isSaved = save[id]

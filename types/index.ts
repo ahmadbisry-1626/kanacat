@@ -60,5 +60,13 @@ export type LikedCatProps = {
     user_id?: string,
     image_id: string,
     sub_id?: string,
+    value?: number,
     created_at?: Date
+}
+
+export type LikedCatResponse = {
+    id: string;
+    image_id: string;
+    sub_id: string;
+    value: number;
 }
