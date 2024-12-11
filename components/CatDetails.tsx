@@ -20,7 +20,7 @@ import gsap from 'gsap';
 
 const LinkCard = ({ imgUrl, name, logoName, link }: { imgUrl: string, name: string, logoName: string, link: string }) => {
     return (
-        <Link href={link} target='blank' className='rounded-[12px] relative group overflow-hidden shadow xl:w-[300px] xl:h-[300px] lg:size-[230px] sm:size-[140px] md::size-[165px] w-[185px] h-[170px]'>
+        <Link href={link} target='blank' className='rounded-[12px] relative group overflow-hidden shadow xl:w-[200px] xl:h-[200px] lg:size-[200px] sm:size-[150px] md::size-[165px] w-[185px] h-[170px]'>
             <div className='size-full bg-black/40 absolute z-10 opacity-0 group-hover:opacity-100 transition-all duration-300' />
             <Image src={imgUrl} alt={name} width={800} height={800} sizes='100vw' className='absolute size-full object-cover object-center' />
         </Link>

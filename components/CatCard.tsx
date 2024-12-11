@@ -237,7 +237,7 @@ const CatCard = () => {
     const dataLength = data?.pages.map((page) => page.length).reduce((acc, val) => acc + val, 0)
 
     return (
-        <section className="w-full min-h-screen flex flex-col py-20 container mx-auto md:px-10 px-6 relative" id='header'>
+        <section className="w-full min-h-screen flex flex-col py-20 md:max-w-7xl mx-auto md:px-10 px-6 relative" id='header'>
             <div
                 className="flex flex-col items-center text-center gap-2 headline-container w-fit mx-auto"
                 ref={headlineRef}
