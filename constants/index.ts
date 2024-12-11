@@ -10,9 +10,9 @@ export const filterContent = [
         desc: 'Indicates if the breed is likely to enjoy sitting on laps '
     },
     {
-        id: 'experimental',
-        name: 'experimental',
-        desc: 'Whether this breed is part of experimental breeding programs'
+        id: 'shortLegs',
+        name: 'short legs',
+        desc: ' Indicates if the breed has short legs'
     },
     {
         id: 'natural',
@@ -36,12 +36,12 @@ export const filterContent = [
     },
     {
         id: 'suppressedTail',
-        name: 'suppressed tail',
+        name: 'short tail',
         desc: 'Indicates if the breed has a suppressed tail'
     },
     {
-        id: 'shortLegs',
-        name: 'short legs',
-        desc: ' Indicates if the breed has short legs'
+        id: 'experimental',
+        name: 'experimental',
+        desc: 'Whether this breed is part of experimental breeding programs'
     },
 ]

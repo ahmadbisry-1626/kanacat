@@ -5,10 +5,8 @@ import React from 'react'
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const id = (await params).id
 
-    console.log(id)
-
     return (
-        <main className='w-full min-h-screen flex flex-col md:px-10 px-6 mx-auto overflow-hidden md:max-w-7xl'>
+        <main className='w-full min-h-screen flex flex-col md:px-10 px-5 mx-auto overflow-hidden md:max-w-7xl'>
             <Navbar />
             <CatDetails id={id}/>
         </main>
