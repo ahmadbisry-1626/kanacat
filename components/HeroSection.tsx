@@ -108,7 +108,7 @@ const HeroSection = () => {
 
 
     return (
-        <section className={`w-full min-h-dvh relative flex items-end md:items-center overflow-hidden`} id="clip" ref={imgRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+        <section className={`w-full min-h-screen relative flex items-end md:items-center overflow-hidden`} id="clip" ref={imgRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
             {/* IMAGE ON MD LARGER */}
             <div className='absolute size-full animation-clip md:block hidden z-10'>
                 <Image src="/img/cat.jpg" alt='' width={1000} height={1000} sizes='100vw' className='absolute left-0 top-0 size-full object-cover' />
