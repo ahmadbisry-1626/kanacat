@@ -328,7 +328,7 @@ const CatCard = () => {
                                                         setCopied((prev) => ({ ...prev, [cat.id]: true }))
                                                         setTimeout(() => setCopied((prev) => ({ ...prev, [cat.id]: false })), 3000)
                                                     }}>
-                                                    <span className={`size-6 absolute left-0 top-0 ${copied[cat.id] ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} transition-all duration-300 font-medium`}>
+                                                    <span className={`size-6 absolute left-0 top-0 ${copied[cat.id] ? 'translate-y-0.5 opacity-100' : 'translate-y-4 opacity-0'} transition-all duration-300 font-medium`}>
                                                         Copied
                                                     </span>
                                                     <RxLink2 className={`size-7 group-hover:scale-[1.03] transition-all duration-300 ${copied[cat.id] ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`} />
@@ -351,7 +351,7 @@ const CatCard = () => {
                                         <div className='flex items-center gap-3 -mb-2'>
                                             {isFetched ? (
                                                 <span className='font-semibold'>
-                                                    {likeCount} Likes
+                                                    {likeCount} {likeCount === 1 ? 'Like' : 'Likes'}
                                                 </span>
                                             ) : (
                                                 <div className='flex items-center gap-1'>
@@ -485,7 +485,7 @@ const CatCard = () => {
                                                         setCopied((prev) => ({ ...prev, [cat.id]: true }))
                                                         setTimeout(() => setCopied((prev) => ({ ...prev, [cat.id]: false })), 3000)
                                                     }}>
-                                                    <span className={`size-6 absolute left-0 top-0 ${copied[cat.id] ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} transition-all duration-300 font-medium`}>
+                                                    <span className={`size-6 absolute left-0 top-0 ${copied[cat.id] ? 'translate-y-0.5 opacity-100' : 'translate-y-4 opacity-0'} transition-all duration-300 font-medium`}>
                                                         Copied
                                                     </span>
                                                     <RxLink2 className={`size-7 group-hover:scale-[1.03] transition-all duration-300 ${copied[cat.id] ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`} />
