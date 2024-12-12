@@ -459,8 +459,8 @@ const CatDetails = ({ id }: { id: string }) => {
                             {wiki && (
                                 <LinkCard imgUrl='/img/wikipedia.jpg' name='Wikipedia' logoName='W' link={car.wikipedia_url ?? '/'} />
                             )}
-                            {cfa && (
-                                <LinkCard imgUrl='/img/cfa.jpg' name="Cat Fanciers' Association" logoName='CF' link={car.cfa_url ?? '/'} />
+                            {vet && (
+                                <LinkCard imgUrl='/img/vetstreet.jpg' name="Vetstreet" logoName='VS' link={car.vetstreet_url ?? '/'} />
                             )}
                         </div>
 
@@ -468,8 +468,8 @@ const CatDetails = ({ id }: { id: string }) => {
                             {vca && (
                                 <LinkCard imgUrl='/img/vca.jpg' name="Veterinary Centers of America" logoName='VA' link={car.vcahospitals_url ?? '/'} />
                             )}
-                            {vet && (
-                                <LinkCard imgUrl='/img/vetstreet.jpg' name="Vetstreet" logoName='VS' link={car.vetstreet_url ?? '/'} />
+                            {cfa && (
+                                <LinkCard imgUrl='/img/cfa.jpg' name="Cat Fanciers' Association" logoName='CF' link={car.cfa_url ?? '/'} />
                             )}
                         </div>
                     </div>
