@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { FaBookmark, FaCheckCircle, FaCircle, FaHeart, FaRegBookmark, FaRegHeart } from 'react-icons/fa';
+import { FaBookmark, FaCircle, FaHeart, FaRegBookmark, FaRegHeart } from 'react-icons/fa';
 import { RxLink2 } from 'react-icons/rx';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -17,6 +17,18 @@ import { deleteLikedCat, likedCatHandler } from '@/lib/actions';
 import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LikedCatProps, LikedCatResponse } from '@/types';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -26,6 +38,8 @@ const CatCard = () => {
     const { data: catData } = useCat()
     const { data: favouriteCat, isFetched } = useFavouriteCat()
 
+    const [secondModalOpen, setSecondModalOpen] = useState(false)
+    const [modalOpen, setModalOpen] = useState(true)
     const [copied, setCopied] = useState<Record<string, boolean>>({})
     const [likedCat, setLikedCat] = useState<Record<string, boolean>>({})
     const [save, setSave] = useState<Record<string, boolean>>({})
@@ -236,6 +250,7 @@ const CatCard = () => {
 
     return (
         <section className="w-full min-h-screen flex flex-col py-20 md:max-w-7xl mx-auto md:px-10 px-5 relative" id='header'>
+
             <div
                 className="flex flex-col items-center text-center gap-2 headline-container w-fit mx-auto"
                 ref={headlineRef}
@@ -306,16 +321,64 @@ const CatCard = () => {
                                     <div className='flex flex-col rounded-[12px] gap-3 bg-white px-4 py-3 pb-4 shadow'>
                                         <div className='flex items-center justify-between'>
                                             <div className='flex items-center gap-3'>
-                                                <button
-                                                    className="group relative"
-                                                    onClick={() => toggleLike(cat.id)}
-                                                >
-                                                    <FaRegHeart className="size-6 group-hover:scale-[1.03] transition-all duration-300" />
-                                                    <FaHeart
-                                                        className={`size-6 absolute z-10 text-red-500 top-0 opacity-0 ${likedCat[cat.id] && '!opacity-100 scale-105'
-                                                            } transition-all duration-300`}
-                                                    />
-                                                </button>
+                                                {modalOpen && secondModalOpen === false ? (
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger className="group relative" onClick={() => toggleLike(cat.id)}>
+                                                            <FaRegHeart className="size-6 group-hover:scale-[1.03] transition-all duration-300" />
+                                                            <FaHeart
+                                                                className={`size-6 absolute z-10 text-red-500 top-0 opacity-0 ${likedCat[cat.id] && '!opacity-100 scale-105'
+                                                                    } transition-all duration-300`}
+                                                            />
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent className=''>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle className='text-[20px] font-semibold'>Free plan limit</AlertDialogTitle>
+                                                                <AlertDialogDescription className='text-[16px] text-gray-500 font-medium'>
+                                                                    Limited API access means no likes for now, but our cats appreciate your love regardless!
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel onClick={() => setSecondModalOpen(true)} className='h-[50px] rounded-[12px]'>Unforgiveness</AlertDialogCancel>
+                                                                <AlertDialogAction onClick={() => setModalOpen(false)} className='!bg-black h-[50px] rounded-[12px] hover:!bg-primary transition-all !duration-300'>Patience is my superpower!</AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+
+                                                ) : modalOpen && secondModalOpen ? (
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger className="group relative" onClick={() => toggleLike(cat.id)}>
+                                                            <FaRegHeart className="size-6 group-hover:scale-[1.03] transition-all duration-300" />
+                                                            <FaHeart
+                                                                className={`size-6 absolute z-10 text-red-500 top-0 opacity-0 ${likedCat[cat.id] && '!opacity-100 scale-105'
+                                                                    } transition-all duration-300`}
+                                                            />
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent className=''>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle className='text-[20px] font-semibold'>Free plan limit</AlertDialogTitle>
+                                                                <AlertDialogDescription className='text-[16px] text-gray-500 font-medium'>
+                                                                    Limited API access means no likes for now, but our cats appreciate your love regardless!
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel onClick={() => setModalOpen(false)} className='h-[50px] rounded-[12px]'>Forgive me</AlertDialogCancel>
+                                                                <AlertDialogAction onClick={() => setModalOpen(false)} className='!bg-black h-[50px] rounded-[12px] hover:!bg-primary transition-all !duration-300'>Patience is my superpower!</AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                ) : (
+                                                    <button
+                                                        className="group relative"
+                                                        onClick={() => toggleLike(cat.id)}
+                                                    >
+                                                        <FaRegHeart className="size-6 group-hover:scale-[1.03] transition-all duration-300" />
+                                                        <FaHeart
+                                                            className={`size-6 absolute z-10 text-red-500 top-0 opacity-0 ${likedCat[cat.id] && '!opacity-100 scale-105'
+                                                                } transition-all duration-300`}
+                                                        />
+                                                    </button>
+                                                )}
+
 
                                                 <button
                                                     className={`group relative ${copied[cat.id] && 'cursor-default'}`}
@@ -361,7 +424,7 @@ const CatCard = () => {
                                         </div>
 
                                         <div className='flex flex-col gap-3'>
-                                            <p className='line-clamp-2 text-[16px] text-gray-500 text-justify break-words'>
+                                            <p className='line-clamp-2 text-[16px] text-gray-500 break-words'>
                                                 {cat.description}
                                             </p>
 
@@ -384,28 +447,32 @@ const CatCard = () => {
                         }))
                     )}
 
-                    {hasNextPage && (
-                        <div className='w-full h-[400px] flex items-center justify-center' ref={ref}>
-                            {isFetchingNextPage && (
-                                <div className='loader' />
-                            )}
-                        </div>
-                    )}
-
-                    {Array.from({
-                        length: Math.max(Math.min(data?.pages.flat().length || 1, 2), 1)
-                    }).map((_, i) => (
+                    {
                         hasNextPage && (
-                            <div className="w-full h-[400px] md:flex items-center justify-center hidden" key={i}>
+                            <div className='w-full h-[400px] flex items-center justify-center' ref={ref}>
                                 {isFetchingNextPage && (
-                                    <div className="loader" />
+                                    <div className='loader' />
                                 )}
                             </div>
                         )
-                    ))}
+                    }
+
+                    {
+                        Array.from({
+                            length: Math.max(Math.min(data?.pages.flat().length || 1, 2), 1)
+                        }).map((_, i) => (
+                            hasNextPage && (
+                                <div className="w-full h-[400px] md:flex items-center justify-center hidden" key={i}>
+                                    {isFetchingNextPage && (
+                                        <div className="loader" />
+                                    )}
+                                </div>
+                            )
+                        ))
+                    }
 
 
-                </div>
+                </div >
             ) : (
                 // when there's a query or filtering, it will show filtered data without limit on API
                 filteredData.length === 0 ? (
@@ -508,7 +575,7 @@ const CatCard = () => {
                                         </div>
 
                                         <div className='flex flex-col gap-3'>
-                                            <p className='line-clamp-2 text-[16px] text-gray-500 text-justify break-words'>
+                                            <p className='line-clamp-2 text-[16px] text-gray-500 break-words'>
                                                 {cat.description}
                                             </p>
 
@@ -536,7 +603,7 @@ const CatCard = () => {
 
 
 
-        </section>
+        </section >
     )
 }
 

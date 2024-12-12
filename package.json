@@ -11,6 +11,7 @@
   "dependencies": {
     "@gsap/react": "^2.1.1",
     "@nivo/pie": "^0.88.0",
+    "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-hover-card": "^1.1.2",
     "@radix-ui/react-progress": "^1.1.0",

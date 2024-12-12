@@ -11,7 +11,7 @@ const Navbar = () => {
                 <span className='font-medium text-[18px]'>KanaCat</span>
             </Link>
 
-            <span className='text-blue-500 font-medium cursor-pointer'>Report a Bug</span>
+            <Link href="mailto:ahmadbisry1626@gmail.com" className='text-blue-500 font-medium cursor-pointer'>Report a Bug</Link>
         </div>
     )
 }
