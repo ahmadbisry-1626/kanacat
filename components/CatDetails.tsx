@@ -208,8 +208,8 @@ const CatDetails = ({ id }: { id: string }) => {
     return (
         <div className='w-full flex flex-col gap-5 py-2 md:py-4 !pb-20'>
             <div className='grid grid-cols-3 gap-5 lg:h-[250px] md:h-[550px]'>
-                <div className='rounded-[12px] lg:col-span-2 col-span-3 flex items-start max-md:flex-col overflow-hidden bg-white shadow' ref={cardRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-                    <div className='md:w-[250px] w-full md:h-full h-[300px] relative flex-shrink-0'>
+                <div className='rounded-[12px] lg:col-span-2 col-span-3 flex items-start max-md:flex-col bg-white shadow' ref={cardRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+                    <div className='md:w-[250px] w-full md:h-full h-[300px] relative flex-shrink-0 overflow-hidden rounded-l-[12px]'>
                         <Image src={car.image?.url ?? '/img/404-white.jpg'} alt='sdasda' width={800} height={800} sizes='100vw' className='absolute size-full object-cover object-top' />
                     </div>
 
